@@ -6,7 +6,7 @@
         <div class="uv-card">
     
             <p class="title">
-                CURRENT UV INDEX - MELBOURNE
+                CURRENT UV INDEX - {{ locationName }}
             </p>
     
             <div class="uv-number">
@@ -31,7 +31,7 @@
             </p>
     
             <div class="burn-time">
-                {{ burnTime }} minutes
+                {{ burnTime > 0 ? burnTime + " minutes" : "No risk" }}
             </div>
     
         </div>
@@ -50,6 +50,7 @@
     const uvLevel = ref("")
     const advice = ref("")
     const burnTime = ref(0)
+    const locationName = ref("Your Location")
 
     async function fetchUV(lat, lng) {
 
@@ -119,15 +120,69 @@
         }
     
     }
+
+    async function fetchCity(lat, lng) {
+
+        const response = await fetch(
+            `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`
+        )
+
+        const data = await response.json()
+
+        console.log("City data:", data)
+
+        locationName.value =
+            data.address.city ||
+            data.address.town ||
+            data.address.village ||
+            data.address.state ||
+            "Unknown Location"
+    }
     
     onMounted(() => {
 
         console.log("Component mounted")
 
-        const lat = 51.5074
-        const lng = -0.1278
+        if (navigator.geolocation) {
 
-        fetchUV(lat,lng)
+            navigator.geolocation.getCurrentPosition(
+
+                position => {
+
+                    const lat = position.coords.latitude
+                    const lng = position.coords.longitude
+
+                    console.log("User location:", lat, lng)
+
+                    fetchUV(lat, lng)
+
+                    fetchCity(lat, lng)
+
+                },
+
+                error => {
+
+                    console.error("Location error:", error)
+
+                    // If error, use default location
+                    const lat = -37.81
+                    const lng = 144.96
+
+                    fetchUV(lat, lng)
+
+                    fetchCity(lat, lng)
+
+                }
+
+            )
+
+        } else {
+
+            console.log("Geolocation not supported")
+
+            fetchUV(-37.81,144.96)
+
+        }
 
     })
     
