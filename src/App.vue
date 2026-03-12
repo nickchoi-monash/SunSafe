@@ -18,7 +18,7 @@ import Footer from './components/Footer.vue';
 <style>
 /* Global styles for the app. Using Warm Grey for the entire site background. */
 body {
-  background-color: #f8f7f5;
+  background:#c0c0c0;
   margin: 0;
   padding: 0;
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
