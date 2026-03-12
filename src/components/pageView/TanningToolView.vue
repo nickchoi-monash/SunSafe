@@ -1,2 +1,9 @@
-<script></script>
-<template>This is the Tanning Tool Page</template>
+<script setup>
+import IconUVDetector from '../icons/IconUVDetector.vue';
+</script>
+
+<template>
+
+    <IconUVDetector/>
+
+</template>
