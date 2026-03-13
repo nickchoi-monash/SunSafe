@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" role="img" aria-label="Beach and reflection background">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0b4aa2"/>
+      <stop offset="45%" stop-color="#ff8a1e"/>
+      <stop offset="70%" stop-color="#ffd1a6"/>
+    </linearGradient>
+    <linearGradient id="ocean" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1db7d6"/>
+      <stop offset="100%" stop-color="#0b3a73"/>
+    </linearGradient>
+    <linearGradient id="sand" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffd8a6"/>
+      <stop offset="100%" stop-color="#f0b56b"/>
+    </linearGradient>
+    <radialGradient id="sun" cx="62%" cy="28%" r="22%">
+      <stop offset="0" stop-color="#fff2b0" stop-opacity="1"/>
+      <stop offset="60%" stop-color="#ffd36b" stop-opacity="0.95"/>
+      <stop offset="100%" stop-color="#ffb44a" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="soft" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="6"/>
+    </filter>
+  </defs>
+  <rect width="1600" height="900" fill="url(#sky)"/>
+  <circle cx="990" cy="250" r="220" fill="url(#sun)" filter="url(#soft)"/>
+  <rect y="520" width="1600" height="240" fill="url(#ocean)"/>
+  <path d="M0 560 C 220 540, 380 600, 600 580 C 820 560, 980 640, 1200 620 C 1400 604, 1500 560, 1600 590 L1600 760 L0 760 Z" fill="#0f5f9a" opacity="0.35"/>
+  <path d="M0 610 C 240 590, 420 660, 640 640 C 880 620, 1020 700, 1260 680 C 1460 664, 1520 620, 1600 650 L1600 760 L0 760 Z" fill="#0b2f59" opacity="0.22"/>
+  <rect y="760" width="1600" height="140" fill="url(#sand)"/>
+  <path d="M0 790 C 260 780, 420 820, 650 810 C 880 800, 1050 850, 1290 840 C 1460 832, 1550 812, 1600 820 L1600 900 L0 900 Z" fill="#f5c07a" opacity="0.55"/>
+</svg>
+

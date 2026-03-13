@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" role="img" aria-label="Australia and sun background">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0b4aa2"/>
+      <stop offset="0.55" stop-color="#ff8a1e"/>
+      <stop offset="1" stop-color="#ff4d8d"/>
+    </linearGradient>
+    <radialGradient id="sun" cx="70%" cy="28%" r="26%">
+      <stop offset="0" stop-color="#fff2b0" stop-opacity="1"/>
+      <stop offset="0.6" stop-color="#ffd36b" stop-opacity="0.95"/>
+      <stop offset="1" stop-color="#ffb44a" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="blur" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="8"/>
+    </filter>
+  </defs>
+  <rect width="1600" height="900" fill="url(#g)"/>
+  <circle cx="1120" cy="240" r="240" fill="url(#sun)" filter="url(#blur)"/>
+  <path d="M490 610c-46-48-79-124-60-182 22-69 94-79 132-150 34-62 17-108 76-146 56-36 122-2 166-34 49-36 40-97 108-116 78-22 112 47 157 76 52 33 125 16 150 74 24 55-32 110-8 168 22 52 82 56 90 116 9 64-52 108-84 153-31 44-20 102-72 126-54 24-100-29-158-22-52 7-79 58-132 62-58 5-96-52-146-56-48-4-96 36-140 10-36-22-26-72-79-79z"
+        fill="rgba(255,255,255,0.16)"/>
+  <path d="M510 640c230 60 430 30 610-80" fill="none" stroke="rgba(255,255,255,0.22)" stroke-width="10" stroke-linecap="round"/>
+</svg>
+
