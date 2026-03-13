@@ -1,5 +1,6 @@
 <script setup>
 import { onMounted, ref } from 'vue'
+import SkinTypeTable from '../SkinTypeTable.vue';
 
 const funFacts = [
   {
@@ -98,6 +99,9 @@ onMounted(() => {
 </script>
 
 <template>
+  <section class="container py-5">
+    <SkinTypeTable />
+  </section>
   <section class="container py-5">
     <div class="d-flex align-items-center justify-content-between flex-wrap gap-3 mb-4">
       <div>
