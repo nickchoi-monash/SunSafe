@@ -29,8 +29,8 @@
         <router-link to="/tanning-tool" class="btn btn-warning btn-lg hero-cta-primary">
           Open Tanning Tool
         </router-link>
-        <router-link to="/prevention-guide" class="btn btn-outline-light btn-lg hero-cta-secondary">
-          Prevention Guide
+        <router-link to="/safety-info" class="btn btn-outline-light btn-lg hero-cta-secondary">
+          Safety Info
         </router-link>
       </div>
 
@@ -101,7 +101,8 @@
 <style scoped>
 .hero {
   position: relative;
-  min-height: clamp(420px, 65vh, 720px);
+  min-height: 100vh;
+  min-height: 100dvh;
   display: grid;
   place-items: stretch;
   overflow: hidden;

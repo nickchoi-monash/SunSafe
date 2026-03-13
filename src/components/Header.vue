@@ -33,11 +33,11 @@
               Tanning Tool
             </router-link>
           </li>
-          <li class="nav-item">
+          <!-- <li class="nav-item">
             <router-link class="nav-link custom-nav-link" to="/prevention-guide" active-class="active">
               Prevention Guide
             </router-link>
-          </li>
+          </li> -->
           <li class="nav-item">
             <router-link class="nav-link custom-nav-link" to="/safety-info" active-class="active">
               Safety Info
