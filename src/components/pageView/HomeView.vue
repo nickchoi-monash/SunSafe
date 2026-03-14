@@ -240,7 +240,7 @@ const handleHeroVideoError = () => {
 }
 
 .hero-cta-primary::before {
-  background-image: url("../../assets/cream_background1.png");
+  background-image: url("../../assets/cream_smear1.png");
 }
 
 .hero-cta-secondary {
