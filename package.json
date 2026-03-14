@@ -9,9 +9,11 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@videojs-player/vue": "^1.0.0",
     "aws-amplify": "^6.16.3",
     "bootstrap": "^5.3.8",
     "bootstrap-icons": "^1.13.1",
+    "video.js": "^7.21.7",
     "vue": "^3.5.29",
     "vue-router": "^4.6.4"
   },
