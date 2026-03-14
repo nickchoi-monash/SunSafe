@@ -408,22 +408,43 @@ function recommendSPFTime() {
 
 /* BASE CARD STYLE */
 .card {
-  background:white;
-  border-radius:20px;
+  background:rgba(255,255,255,0.25);
+
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+
+  border-radius:28px;
+
+  border:1px solid rgba(255,255,255,0.4);
+
   padding:30px;
-  box-shadow:0 10px 25px rgba(0,0,0,0.05);
+
+  box-shadow:
+    0 8px 30px rgba(0,0,0,0.15);
+
   display:flex;
   flex-direction:column;
   justify-content:center;
   align-items:center;
   text-align:center;
+
+  transition:all 0.3s ease;
+}
+
+.card:hover {
+transform:translateY(-5px);
+
+box-shadow:
+  0 15px 40px rgba(0,0,0,0.2);
 }
 
 /* UV CARD */
 .uv-card {
   grid-column:1 / 7;
   grid-row:1 / 5;
-  color:white;
+  background:rgba(255,150,0,0.35);
+
+  backdrop-filter: blur(20px);
 }
 
 .uv-number {
