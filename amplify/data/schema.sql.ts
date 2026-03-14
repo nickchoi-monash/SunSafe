@@ -42,4 +42,43 @@ export const schema = configure({
     }).identifier([
         "id"
     ]).authorization(allow => [allow.publicApiKey().to(["read"])])
+    ,
+    "cancer_age_data": a.model({
+        id: a.integer().required(),
+        data_type: a.string(),
+        cancer_group_site: a.string(),
+        year: a.integer(),
+        sex: a.string(),
+        age_group_years: a.string(),
+        count: a.integer(),
+        age_specific_rate_per_100000: a.float(),
+        icd10_codes: a.string()
+    }).identifier([
+        "id"
+    ]).authorization(allow => [allow.publicApiKey().to(["read"])])
+    ,
+    "skin_cancer_gender": a.model({
+        id: a.integer().required(),
+        year: a.integer().required(),
+        sex: a.string().required(),
+        rate_per_100k: a.float()
+    }).identifier([
+        "id"
+    ]).authorization(allow => [allow.publicApiKey().to(["read"])])
+    ,
+    "skin_cancer_territory": a.model({
+        id: a.integer().required(),
+        year: a.integer().required(),
+        sex: a.string().required(),
+        territory_code: a.string().required(),
+        territory_name: a.string().required(),
+        cancer_group_site: a.string(),
+        icd10_code: a.string(),
+        count_cases: a.integer(),
+        crude_rate_per_100k: a.float(),
+        age_standardised_rate_2001_per_100k: a.float(),
+        age_standardised_rate_2025_per_100k: a.float()
+    }).identifier([
+        "id"
+    ]).authorization(allow => [allow.publicApiKey().to(["read"])])
 });
