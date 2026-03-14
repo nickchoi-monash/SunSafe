@@ -1,10 +1,64 @@
 <script setup>
-import { ref } from 'vue';
+import { onBeforeUnmount, onMounted, ref } from 'vue';
 
 const showHeroVideo = ref(true);
+const heroVideoEl = ref(null);
+const heroVideoNeedsTap = ref(false);
+
+let reducedMotionMediaQuery;
+let reducedMotionOnChange;
+const prefersReducedMotion = () =>
+  typeof window !== 'undefined' &&
+  typeof window.matchMedia === 'function' &&
+  window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+const attemptHeroVideoPlay = async () => {
+  const el = heroVideoEl.value;
+  if (!el) return;
+
+  try {
+    const playResult = el.play();
+    if (playResult && typeof playResult.then === 'function') {
+      await playResult;
+    }
+    heroVideoNeedsTap.value = false;
+  } catch {
+    // Autoplay blocked (common on iOS / power saving). Let user tap to start.
+    heroVideoNeedsTap.value = true;
+    console.warn('[SunSafety] Hero video autoplay blocked; waiting for user interaction.');
+  }
+};
+
 const handleHeroVideoError = () => {
   showHeroVideo.value = false;
+  console.warn('[SunSafety] Hero video failed to load; falling back to poster image.');
 };
+
+onMounted(() => {
+  if (prefersReducedMotion()) {
+    showHeroVideo.value = false;
+    return;
+  }
+
+  // Try to start playback; if autoplay is blocked, we'll show a tap-to-play overlay.
+  requestAnimationFrame(() => {
+    attemptHeroVideoPlay();
+  });
+
+  if (typeof window !== 'undefined' && typeof window.matchMedia === 'function') {
+    reducedMotionMediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    reducedMotionOnChange = (event) => {
+      if (event.matches) {
+        showHeroVideo.value = false;
+      }
+    };
+    reducedMotionMediaQuery.addEventListener?.('change', reducedMotionOnChange);
+  }
+});
+
+onBeforeUnmount(() => {
+  reducedMotionMediaQuery?.removeEventListener?.('change', reducedMotionOnChange);
+});
 </script>
 
 <template>
@@ -12,14 +66,17 @@ const handleHeroVideoError = () => {
     <div class="hero-media" aria-hidden="true">
       <video
         v-if="showHeroVideo"
+        ref="heroVideoEl"
         class="hero-video"
         autoplay
         muted
         loop
+        webkit-playsinline
         playsinline
         preload="metadata"
         poster="/media/hero-poster.png"
         @error="handleHeroVideoError"
+        @canplay="attemptHeroVideoPlay"
       >
         <source
           src="https://sun-safety-media.s3.ap-southeast-2.amazonaws.com/womenapplyingsunscreen.mp4"
@@ -27,6 +84,14 @@ const handleHeroVideoError = () => {
         />
         <source src="/media/womenapplyingsunscreen.mp4" type="video/mp4" />
       </video>
+      <button
+        v-if="showHeroVideo && heroVideoNeedsTap"
+        type="button"
+        class="hero-video-play"
+        @click="attemptHeroVideoPlay"
+      >
+        Tap to play video
+      </button>
       <img
         v-else
         class="hero-poster"
@@ -155,6 +220,22 @@ const handleHeroVideoError = () => {
   object-fit: cover;
   filter: saturate(1.15) contrast(1.05);
   transform: scale(1.02);
+}
+
+.hero-video-play {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1;
+  background: rgba(0, 0, 0, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  color: #ffffff;
+  font-weight: 700;
+  padding: 0.7rem 1rem;
+  border-radius: 999px;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 }
 
 .hero-scrim {
