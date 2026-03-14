@@ -1,6 +1,9 @@
 <script setup>
 import { onMounted, ref } from 'vue'
 import SkinTypeTable from '../SkinTypeTable.vue';
+import SkinCancerMap from '../SkinCancerMap.vue';
+import SkinCanerSex from '../SkinCanerSex.vue';
+import SkinCancerAge from '../SkinCancerAge.vue';
 
 const funFacts = [
   {
@@ -100,7 +103,16 @@ onMounted(() => {
 
 <template>
   <section class="container py-5">
-    <SkinTypeTable />
+    <SkinCancerMap />
+    <div class="mt-4">
+      <SkinCanerSex />
+    </div>
+    <div class="mt-4">
+      <SkinCancerAge />
+    </div>
+    <!-- <div class="mt-4">
+      <SkinTypeTable />
+    </div> -->
   </section>
   <section class="container py-5">
     <div class="d-flex align-items-center justify-content-between flex-wrap gap-3 mb-4">
