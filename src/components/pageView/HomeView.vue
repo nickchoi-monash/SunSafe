@@ -27,11 +27,11 @@
       </p>
 
       <div class="d-flex flex-column flex-sm-row gap-3">
-        <router-link to="/tanning-tool" class="btn btn-warning btn-lg hero-cta-primary">
-          Open Tanning Tool
+        <router-link to="/tanning-tool" class="btn btn-lg hero-cta hero-cta-primary">
+          <span class="hero-cta-label">Open Tanning Tool</span>
         </router-link>
-        <router-link to="/safety-info" class="btn btn-outline-light btn-lg hero-cta-secondary">
-          Safety Info
+        <router-link to="/safety-info" class="btn btn-lg hero-cta hero-cta-secondary">
+          <span class="hero-cta-label">Safety Info</span>
         </router-link>
       </div>
 
@@ -165,16 +165,73 @@
   font-size: 1.1rem;
 }
 
+.hero-cta {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 1.65rem 2.35rem;
+  border: 0 !important;
+  background: transparent !important;
+  border-radius: 16px;
+  overflow: visible;
+  box-shadow: none;
+  transition: transform 260ms ease, filter 260ms ease;
+}
+
+.hero-cta::before {
+  content: "";
+  position: absolute;
+  inset: -18px;
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  background-position: center;
+  z-index: 0;
+  pointer-events: none;
+  filter: none;
+}
+
+.hero-cta-label {
+  position: relative;
+  z-index: 1;
+  font-weight: 800;
+  letter-spacing: 0.01em;
+}
+
 .hero-cta-primary {
   color: #1c1400;
-  font-weight: 700;
-  border: 0;
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+}
+
+.hero-cta-primary::before {
+  background-image: url("../../assets/cream_background1.png");
 }
 
 .hero-cta-secondary {
-  font-weight: 700;
-  border-width: 2px;
+  color: #1c1400 !important;
+}
+
+.hero-cta-secondary::before {
+  background-image: url("../../assets/cream_background2.png");
+}
+
+.hero-cta:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.02);
+}
+
+.hero-cta-secondary:hover {
+  color: rgba(255, 255, 255, 0.96) !important;
+}
+
+.hero-cta:active {
+  transform: translateY(0);
+  filter: brightness(0.99);
+}
+
+.hero-cta:focus-visible {
+  outline: 0;
+  box-shadow: 0 0 0 0.25rem rgba(255, 128, 1, 0.35);
 }
 
 .hero-pill {
