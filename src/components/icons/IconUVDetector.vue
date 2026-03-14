@@ -1,7 +1,7 @@
 <template>
   <div class="dashboard-grid">
     <!-- UV CARD -->
-    <div class="card uv-card">
+    <div class="card uv-card" :style="{background: uvColor}">
       <p class="title">CURRENT UV INDEX - {{ locationName }}</p>
       <div class="uv-number">{{ uv }}</div>
       <div class="uv-level">{{ uvLevel }}</div>
@@ -26,29 +26,142 @@
     <!-- TIME TO BURN -->
     <div class="card burn-card">
       <p class="card-title">Time to Burn</p>
-      <div class="burn-circle">
-        <div class="burn-value">{{ burnTime }}</div>
-        <div class="burn-unit">minutes</div>
+      <div class="burn-circle" :style="{borderColor: uvColor}">
+        <div class="burn-value">
+          {{ uv <= 2 ? '∞' : timer }}
+        </div>
+        <div class="burn-unit">
+          {{ uv <= 2 ? 'No burn risk' : 'minutes' }}
+        </div>
+      </div>
+      <div class="timer-buttons">
+
+      <button
+        class="timer-btn"
+        v-if="!isRunning"
+        @click="startTimer"
+      >
+      Start
+      </button>
+
+      <button
+        class="timer-btn"
+        v-if="isRunning"
+        @click="pauseTimer"
+      >
+      Pause
+      </button>
+
+      <button
+        class="timer-btn cancel"
+        @click="cancelTimer"
+      >
+      Cancel
+      </button>
+
       </div>
     </div>
 
-    <div class="card spf-card">SPF</div>
-    <div class="card humidity-card">HUM</div>
-    <div class="card temp-card">TEMP</div>
-    <div class="card wind-card">WIND</div>
+    <div class="card spf-card">
+      <p class="spf-title">🧴 SPF Reapplication</p>
+      <!-- TIME DISPLAY -->
+      <div class="spf-timer">
+        {{ formattedTime }}
+      </div>
+
+      <!-- TIME PICKER -->
+      <div v-if="!spfRunning" class="spf-picker">
+        <input
+          type="number"
+          v-model="spfHours"
+          min="0"
+          max="6"
+        />
+
+        <span>h</span>
+
+        <input
+          type="number"
+          v-model="spfMinutes"
+          min="0"
+          max="59"
+          step="1"
+        />
+
+        <span>m</span>
+      </div>
+
+      <!-- PROGRESS BAR -->
+      <div class="spf-progress">
+        <div
+          class="spf-progress-fill"
+          :style="{ width: progressPercent + '%' }"
+        ></div>
+      </div>
+
+      <!-- BUTTON -->
+      <div class="spf-buttons">
+        <button
+          class="spf-button"
+          @click="toggleSPF"
+        >
+          {{ spfRunning ? 'I Just Applied SPF' : 'Start SPF Timer' }}
+        </button>
+
+        <button
+          class="spf-reset"
+          @click="resetSPF"
+        >
+          Reset
+        </button>
+      </div>
+    </div>
+
+    <div class="card humidity-card">
+      <p class="card-title">Humidity</p>
+      <div class="weather-value">{{ humidity }}%</div>
+    </div>
+
+    <div class="card temp-card">
+      <p class="card-title">Temp</p>
+      <div class="weather-value">{{ temperature }}°C</div>
+    </div>
+
+    <div class="card wind-card">
+      <p class="card-title">Wind</p>
+      <div class="weather-value">{{ windSpeed }} km/h</div>
+    </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted,computed } from 'vue'
 
 console.log('API KEY:', import.meta.env.VITE_UV_API_KEY)
 
 const uv = ref(0)
 const uvLevel = ref('')
+const uvColor = ref('#4CAF50')
 const advice = ref('')
 const burnTime = ref(0)
 const locationName = ref('Your Location')
+// timer
+const timer = ref(0)
+const isRunning = ref(false)
+let interval = null
+
+//SPF timer
+const spfHours = ref(2)
+const spfMinutes = ref(0)
+const spfTimer = ref(120*60)
+const spfRunning = ref(false)
+
+let spfInterval = null
+
+// weather card
+const humidity = ref(0)
+const temperature = ref(0)
+const windSpeed = ref(0)
 
 async function fetchUV(lat, lng) {
   console.log('Fetching UV data...')
@@ -60,6 +173,11 @@ async function fetchUV(lat, lng) {
     }
   })
 
+  if (!response.ok) {
+    console.error("OpenUV API error:", response.status)
+    return
+  }
+
   console.log('Response status:', response.status)
 
   const data = await response.json()
@@ -67,28 +185,94 @@ async function fetchUV(lat, lng) {
 
   uv.value = Math.round(result.uv)
   burnTime.value = result.safe_exposure_time.st2
+  timer.value = burnTime.value
   setUVLevel(uv.value)
 
   console.log('UV API data:', data)
+  recommendSPFTime()
+}
+
+async function fetchWeather(lat, lng) {
+  try {
+    const response = await fetch(
+      `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lng}&appid=${import.meta.env.VITE_WEATHER_API_KEY}&units=metric`
+    )
+
+    const data = await response.json()
+
+    console.log("Weather API:", data)
+
+    temperature.value = Math.round(data.main.temp)
+    humidity.value = data.main.humidity
+    windSpeed.value = Math.round(data.wind.speed * 3.6)
+  } catch (error) {
+    console.error("Weather API error:", error)
+  }
 }
 
 function setUVLevel(value) {
   if (value <= 2) {
     uvLevel.value = 'Low'
     advice.value = 'Minimal protection required.'
-  } else if (value <= 5) {
+    uvColor.value = '#4CAF50'
+  }
+
+  else if (value <= 5) {
     uvLevel.value = 'Moderate'
     advice.value = 'Wear sunscreen.'
-  } else if (value <= 7) {
+    uvColor.value = '#FFEB3B'
+  }
+
+  else if (value <= 7) {
     uvLevel.value = 'High'
     advice.value = 'Seek shade during midday.'
-  } else if (value <= 10) {
+    uvColor.value = '#FF9800'
+  }
+
+  else if (value <= 10) {
     uvLevel.value = 'Very High'
     advice.value = 'Protection required. Seek shade.'
-  } else {
+    uvColor.value = '#F44336'
+  }
+
+  else {
     uvLevel.value = 'Extreme'
     advice.value = 'Avoid sun exposure.'
+    uvColor.value = '#9C27B0'
   }
+}
+
+// timer
+function startTimer() {
+  if (isRunning.value) return
+
+  isRunning.value = true
+
+  interval = setInterval(() => {
+
+    if (timer.value > 0) {
+      timer.value--
+    }
+
+    else {
+      clearInterval(interval)
+      isRunning.value = false
+    }
+
+  }, 1000) //decrease per minute
+}
+
+function pauseTimer() {
+  clearInterval(interval)
+  isRunning.value = false
+
+}
+
+function cancelTimer() {
+  clearInterval(interval)
+
+  timer.value = burnTime.value
+  isRunning.value = false
 }
 
 async function fetchCity(lat, lng) {
@@ -120,6 +304,7 @@ onMounted(() => {
 
         fetchUV(lat, lng)
         fetchCity(lat, lng)
+        fetchWeather(lat, lng)
       },
       error => {
         console.error('Location error:', error)
@@ -129,6 +314,7 @@ onMounted(() => {
 
         fetchUV(lat, lng)
         fetchCity(lat, lng)
+        fetchWeather(lat, lng)
       }
     )
   } else {
@@ -136,6 +322,69 @@ onMounted(() => {
     fetchUV(-37.81, 144.96)
   }
 })
+
+// SPF timer
+const spfDuration = computed(() => {
+  return (spfHours.value * 60 + spfMinutes.value) * 60
+})
+
+const formattedTime = computed(() => {
+  const total = spfTimer.value
+
+  const h = Math.floor(total / 3600)
+  const m = Math.floor((total % 3600) / 60)
+  const s = total % 60
+
+  return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`
+})
+
+const progressPercent = computed(() => {
+  return (spfTimer.value / spfDuration.value) * 100
+})
+
+function toggleSPF() {
+  if (!spfRunning.value) {
+
+    spfTimer.value = spfDuration.value
+    spfRunning.value = true
+
+    spfInterval = setInterval(() => {
+      if (spfTimer.value > 0) {
+        spfTimer.value--
+      } else {
+        clearInterval(spfInterval)
+        spfTimer.value = spfDuration.value
+        alert("Time to reapply sunscreen!")
+        resetSPF()
+      }
+    }, 1000)
+  } else {
+    spfTimer.value = spfDuration.value
+  }
+}
+
+function resetSPF() {
+  clearInterval(spfInterval)
+  spfRunning.value = false
+  spfTimer.value = spfDuration.value
+}
+
+function recommendSPFTime() {
+  if (uv.value <= 2) {
+    spfHours.value = 0
+    spfMinutes.value = 0
+  } else if (uv.value <= 5) {
+    spfHours.value = 2
+    spfMinutes.value = 0
+  } else if (uv.value <= 7) {
+    spfHours.value = 1
+    spfMinutes.value = 30
+  } else {
+    spfHours.value = 1
+    spfMinutes.value = 0
+  }
+}
+
 </script>
 
 <style scoped>
@@ -174,7 +423,6 @@ onMounted(() => {
 .uv-card {
   grid-column:1 / 7;
   grid-row:1 / 5;
-  background:linear-gradient(135deg,#ff9800,#ff6a00);
   color:white;
 }
 
@@ -206,18 +454,22 @@ onMounted(() => {
 }
 
 .burn-circle {
-  width:150px;
-  height:150px;
-  border:10px solid orange;
+  width:200px;
+  height:200px;
+  border:14px solid;
   border-radius:50%;
+  background:transparent;
+
   display:flex;
   flex-direction:column;
   justify-content:center;
   align-items:center;
+
+  box-shadow:0 6px 20px rgba(0,0,0,0.1);
 }
 
 .burn-value {
-  font-size:40px;
+  font-size:48px;
   font-weight:700;
 }
 
@@ -226,25 +478,99 @@ onMounted(() => {
   color:#888;
 }
 
+.timer-buttons{
+margin-top:20px;
+display:flex;
+gap:10px;
+}
+
+.timer-btn{
+background:orange;
+border:none;
+color:white;
+padding:8px 16px;
+border-radius:8px;
+cursor:pointer;
+}
+
+.timer-btn.cancel{
+background:#999;
+}
+
 /* SPF CARD */
 .spf-card {
   grid-column:7 / 10;
   grid-row:4 / 7;
+
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+}
+
+.spf-title {
+  font-weight:600;
+  margin-bottom:10px;
 }
 
 .spf-timer {
-  font-size:32px;
+  font-size:36px;
   font-weight:700;
-  margin:20px 0;
+  margin:10px 0 20px 0;
+}
+
+.spf-picker {
+  display:flex;
+  align-items:center;
+  gap:8px;
+  margin-bottom:20px;
+}
+
+.spf-picker input {
+  width:60px;
+  padding:6px;
+  font-size:16px;
+  text-align:center;
+}
+
+.spf-progress {
+  width:90%;
+  height:8px;
+  background:#ddd;
+  border-radius:6px;
+  overflow:hidden;
+  margin-bottom:20px;
+}
+
+.spf-progress-fill {
+  height:100%;
+  background:orange;
+  transition:width 1s linear;
+}
+
+.spf-buttons {
+  width:90%;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+.spf-reset {
+  background:#eee;
+  border:none;
+  padding:10px;
+  border-radius:10px;
+  cursor:pointer;
 }
 
 .spf-button {
   background:orange;
   border:none;
   color:white;
-  padding:12px 24px;
-  border-radius:10px;
+  padding:14px;
+  border-radius:12px;
   cursor:pointer;
+  font-weight:600;
 }
 
 .spf-button:hover {
@@ -265,6 +591,11 @@ onMounted(() => {
 .wind-card {
   grid-column:7 / 10;
   grid-row:7;
+}
+
+.weather-value {
+  font-size:24px;
+  font-weight:600;
 }
 
 /* MOBILE RESPONSIVE */
