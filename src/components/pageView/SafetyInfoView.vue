@@ -4,6 +4,7 @@ import SkinTypeTable from '../SkinTypeTable.vue';
 import SkinCancerMap from '../SkinCancerMap.vue';
 import SkinCanerSex from '../SkinCanerSex.vue';
 import SkinCancerAge from '../SkinCancerAge.vue';
+import SkinCancerKPI from '../SkinCancerKPI.vue';
 
 const funFacts = [
   {
@@ -103,6 +104,7 @@ onMounted(() => {
 
 <template>
   <section class="container py-5">
+    <SkinCancerKPI />
     <SkinCancerMap />
     <div class="mt-4">
       <SkinCanerSex />
