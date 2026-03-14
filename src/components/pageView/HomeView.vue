@@ -1,10 +1,17 @@
 <script setup>
+import { ref } from 'vue';
+
+const showHeroVideo = ref(true);
+const handleHeroVideoError = () => {
+  showHeroVideo.value = false;
+};
 </script>
 
 <template>
   <section class="hero">
     <div class="hero-media" aria-hidden="true">
       <video
+        v-if="showHeroVideo"
         class="hero-video"
         autoplay
         muted
@@ -12,9 +19,22 @@
         playsinline
         preload="metadata"
         poster="/media/hero-poster.png"
+        @error="handleHeroVideoError"
       >
+        <source
+          src="https://sun-safety-media.s3.ap-southeast-2.amazonaws.com/womenapplyingsunscreen.mp4"
+          type="video/mp4"
+        />
         <source src="/media/womenapplyingsunscreen.mp4" type="video/mp4" />
       </video>
+      <img
+        v-else
+        class="hero-poster"
+        src="/media/hero-poster.png"
+        alt=""
+        loading="eager"
+        decoding="async"
+      />
       <div class="hero-scrim"></div>
     </div>
 
@@ -118,6 +138,16 @@
 }
 
 .hero-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: saturate(1.15) contrast(1.05);
+  transform: scale(1.02);
+}
+
+.hero-poster {
   position: absolute;
   inset: 0;
   width: 100%;
