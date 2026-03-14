@@ -4,7 +4,7 @@
       
       <router-link class="navbar-brand d-flex align-items-center" to="/" @click="closeMobileMenu">
         <div class="logo-icon-box d-flex align-items-center justify-content-center me-2">
-          <i class="bi bi-brightness-high-fill"></i>
+          <img :src="sunsafetyLogo3" alt="SunSafety logo" class="logo-image" />
         </div>
         <span class="logo-text">SunSafety</span>
       </router-link>
@@ -50,8 +50,15 @@
 </template>
 
 <script>
+import sunsafetyLogo3 from '../assets/sunsafetylogo3.png';
+
 export default {
   name: 'HeaderComponent',
+  data() {
+    return {
+      sunsafetyLogo3
+    };
+  },
   methods: {
     closeMobileMenu() {
       const collapseEl = this.$el?.querySelector?.('#sunSafetyNavbar');
@@ -73,9 +80,14 @@ export default {
   width: 38px;
   height: 38px;
   border-radius: 8px;
-  background: linear-gradient(135deg, #fe850d 0%, #ed6820 100%);
-  color: white;
-  font-size: 1.4rem;
+  overflow: hidden;
+}
+
+.logo-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
 }
 
 .logo-text {

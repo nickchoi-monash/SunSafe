@@ -3,7 +3,7 @@
     <div class="container text-center">
       
       <div class="footer-logo d-flex align-items-center justify-content-center mb-3">
-        <i class="bi bi-brightness-high me-2 footer-sun-icon"></i>
+        <img :src="sunsafetyLogo3" alt="SunSafety logo" class="footer-logo-image me-2" />
         <span class="footer-logo-text">SunSafety</span>
       </div>
 
@@ -22,8 +22,15 @@
 </template>
 
 <script>
+import sunsafetyLogo3 from '../assets/sunsafetylogo3.png';
+
 export default {
-  name: 'FooterComponent'
+  name: 'FooterComponent',
+  data() {
+    return {
+      sunsafetyLogo3
+    };
+  }
 }
 </script>
 
@@ -35,9 +42,11 @@ export default {
   color: #ff8001;
 }
 
-.footer-sun-icon {
-  font-size: 1.8rem;
-  color: #ff8001;
+.footer-logo-image {
+  width: 34px;
+  height: 34px;
+  object-fit: contain;
+  display: block;
 }
 
 /* Navigation Button Color for secondary text */
