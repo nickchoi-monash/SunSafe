@@ -2,7 +2,7 @@
   <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom sticky-top py-3">
     <div class="container">
       
-      <router-link class="navbar-brand d-flex align-items-center" to="/">
+      <router-link class="navbar-brand d-flex align-items-center" to="/" @click="closeMobileMenu">
         <div class="logo-icon-box d-flex align-items-center justify-content-center me-2">
           <i class="bi bi-brightness-high-fill"></i>
         </div>
@@ -24,12 +24,12 @@
       <div class="collapse navbar-collapse" id="sunSafetyNavbar">
         <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
           <li class="nav-item">
-            <router-link class="nav-link custom-nav-link" to="/" exact-active-class="active">
+            <router-link class="nav-link custom-nav-link" to="/" exact-active-class="active" @click="closeMobileMenu">
               Home
             </router-link>
           </li>
           <li class="nav-item">
-            <router-link class="nav-link custom-nav-link" to="/tanning-tool" active-class="active">
+            <router-link class="nav-link custom-nav-link" to="/tanning-tool" active-class="active" @click="closeMobileMenu">
               Tanning Tool
             </router-link>
           </li>
@@ -39,7 +39,7 @@
             </router-link>
           </li> -->
           <li class="nav-item">
-            <router-link class="nav-link custom-nav-link" to="/safety-info" active-class="active">
+            <router-link class="nav-link custom-nav-link" to="/safety-info" active-class="active" @click="closeMobileMenu">
               Safety Info
             </router-link>
           </li>
@@ -51,7 +51,19 @@
 
 <script>
 export default {
-  name: 'HeaderComponent'
+  name: 'HeaderComponent',
+  methods: {
+    closeMobileMenu() {
+      const collapseEl = this.$el?.querySelector?.('#sunSafetyNavbar');
+      if (!collapseEl?.classList?.contains('show')) return;
+
+      const togglerBtn = this.$el?.querySelector?.('.navbar-toggler');
+      if (!togglerBtn) return;
+
+      // Use Bootstrap's built-in data-api toggle so we don't accidentally load Bootstrap twice.
+      togglerBtn.click();
+    }
+  }
 }
 </script>
 
