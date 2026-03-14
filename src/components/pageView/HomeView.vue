@@ -14,8 +14,17 @@ const handleHeroVideoError = () => {
     <div class="hero-media" aria-hidden="true">
       <video-player v-if="showHeroVideo"
         src="https://sun-safety-media.s3.ap-southeast-2.amazonaws.com/womenapplyingsunscreen.mp4"
-        poster="/media/hero-poster.png" controls :loop="true" :volume="0" :muted="true" :autoplay="true"
-        :playsinline="true" class="hero-video" />
+        poster="/media/hero-poster.png"
+        :controls="false"
+        :fill="true"
+        :loop="true"
+        :volume="0"
+        :muted="true"
+        :autoplay="true"
+        :playsinline="true"
+        class="hero-video"
+        @error="handleHeroVideoError"
+      />
       <img v-else class="hero-poster" src="/media/hero-poster.png" alt="" loading="eager" decoding="async" />
       <div class="hero-scrim"></div>
     </div>
@@ -124,9 +133,24 @@ const handleHeroVideoError = () => {
   inset: 0;
   width: 100%;
   height: 100%;
-  object-fit: cover;
   filter: saturate(1.15) contrast(1.05);
   transform: scale(1.02);
+}
+
+.hero-video :deep(.video-js),
+.hero-video :deep(.v-video-player),
+.hero-video :deep(.vjs-tech) {
+  width: 100%;
+  height: 100%;
+}
+
+.hero-video :deep(.vjs-tech) {
+  object-fit: cover;
+}
+
+.hero-video :deep(.vjs-control-bar),
+.hero-video :deep(.vjs-big-play-button) {
+  display: none !important;
 }
 
 .hero-poster {
