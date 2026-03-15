@@ -3,6 +3,11 @@ import IconUVDetector from '../icons/IconUVDetector.vue';
 </script>
 
 <template>
+  <div class="video-background">
+    <video autoplay muted loop playsinline preload="metadata">
+      <source src="/media/beach.mp4" type="video/mp4">
+    </video>
+  </div>
   <div class="uv-detector-wrapper">
     <IconUVDetector />
   </div>
@@ -14,5 +19,27 @@ import IconUVDetector from '../icons/IconUVDetector.vue';
   display: flex;
   justify-content: center;
   width: 100%;
+}
+.video-background{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  z-index:-1;
+  overflow:hidden;
+}
+
+.video-background video{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+.video-background::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:rgba(0,0,0,0.1);
 }
 </style>
