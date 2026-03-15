@@ -12,17 +12,7 @@
 
     <!-- MID CARD -->
     <div class="card mid-card">
-      <!--
-      <div class="info-block">
-        <p class="info-title">UV Status</p>
-        <h3>{{ uvLevel }}</h3>
-      </div>
-
-      <div class="info-block">
-        <p class="info-title">Recommended</p>
-        <h3>SPF 50+</h3>
-      </div>
-      -->
+      <IconSkinInfo :skinType="skinType" />
     </div>
 
     <!-- TIME TO BURN -->
@@ -139,6 +129,7 @@
 <script setup>
 import { ref, onMounted,computed, watch } from 'vue'
 import IconSkinTypeSelector from './IconSkinTypeSelector.vue'
+import IconSkinInfo from './IconSkinInfo.vue'
 
 console.log('API KEY:', import.meta.env.VITE_UV_API_KEY)
 
@@ -428,7 +419,7 @@ function recommendSPFTime() {
   display:grid;
   width: 100%;
   grid-template-columns:repeat(9,1fr);
-  grid-template-rows:repeat(7,120px);
+  grid-auto-rows:minmax(120px,auto);
   gap:20px;
 }
 
@@ -501,8 +492,8 @@ box-shadow:
 }
 
 .burn-circle {
-  width:200px;
-  height:200px;
+  width:clamp(120px, 35vw, 200px);
+  height:clamp(120px, 35vw, 200px);
   border:14px solid;
   border-radius:50%;
   background:transparent;
@@ -516,32 +507,37 @@ box-shadow:
 }
 
 .burn-value {
-  font-size:48px;
+  font-size:clamp(28px, 6vw, 48px);
   font-weight:700;
 }
 
 .burn-unit {
-  font-size:14px;
+  font-size:clamp(12px, 3vw, 14px);
   color:#888;
+
+  max-width:80%;
+  line-height:1.2;
 }
 
 .timer-buttons{
-margin-top:20px;
-display:flex;
-gap:10px;
+  margin-top:20px;
+  display:flex;
+  justify-content:center;
+  gap:10px;
+  flex-wrap:wrap;
 }
 
 .timer-btn{
-background:orange;
-border:none;
-color:white;
-padding:8px 16px;
-border-radius:8px;
-cursor:pointer;
+  background:orange;
+  border:none;
+  color:white;
+  padding:8px 16px;
+  border-radius:8px;
+  cursor:pointer;
 }
 
 .timer-btn.cancel{
-background:#999;
+  background:#999;
 }
 
 /* SPF CARD */
@@ -648,19 +644,21 @@ background:#999;
 /* MOBILE RESPONSIVE */
 @media (max-width:900px) {
   .dashboard-grid {
-  grid-template-columns:1fr;
+  grid-template-columns:repeat(3,1fr);;
   grid-template-rows:auto;
   }
   .card {
-  grid-column:auto !important;
+  grid-column:1 / -1 !important;
   grid-row:auto !important;
   }
   .uv-number {
   font-size:70px;
   }
-  .burn-circle {
-  width:120px;
-  height:120px;
+  /* weather cards stay on one row */
+  .humidity-card,
+  .temp-card,
+  .wind-card{
+    grid-column:auto !important;
   }
 }
 </style>
