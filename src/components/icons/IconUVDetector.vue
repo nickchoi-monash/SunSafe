@@ -8,6 +8,8 @@
       <p class="advice">{{ advice }}</p>
     </div>
 
+    <IconSkinTypeSelector v-model="skinType" />
+
     <!-- MID CARD -->
     <div class="card mid-card">
       <!--
@@ -28,10 +30,10 @@
       <p class="card-title">Time to Burn</p>
       <div class="burn-circle" :style="{borderColor: uvColor}">
         <div class="burn-value">
-          {{ uv <= 2 ? '∞' : timer }}
+          {{ uv <= 2 ? '∞' :  exposureTime }}
         </div>
         <div class="burn-unit">
-          {{ uv <= 2 ? 'No burn risk' : 'minutes' }}
+          {{ uv <= 2 ? 'No burn risk' : 'time remaining' }}
         </div>
       </div>
       <div class="timer-buttons">
@@ -135,7 +137,8 @@
 </template>
 
 <script setup>
-import { ref, onMounted,computed } from 'vue'
+import { ref, onMounted,computed, watch } from 'vue'
+import IconSkinTypeSelector from './IconSkinTypeSelector.vue'
 
 console.log('API KEY:', import.meta.env.VITE_UV_API_KEY)
 
@@ -143,8 +146,11 @@ const uv = ref(0)
 const uvLevel = ref('')
 const uvColor = ref('#4CAF50')
 const advice = ref('')
-const burnTime = ref(0)
+// const burnTime = ref(0)
 const locationName = ref('Your Location')
+// SkinType
+const uvData = ref(null)  
+const skinType = ref("st2")
 // timer
 const timer = ref(0)
 const isRunning = ref(false)
@@ -184,13 +190,33 @@ async function fetchUV(lat, lng) {
   const result = data.result
 
   uv.value = Math.round(result.uv)
-  burnTime.value = result.safe_exposure_time.st2
-  timer.value = burnTime.value
+  uvData.value = result
+  // burnTime.value = result.safe_exposure_time[skinType.value]
+  // timer.value = burnTime.value
   setUVLevel(uv.value)
 
   console.log('UV API data:', data)
   recommendSPFTime()
 }
+
+const burnTime = computed(() => {
+  if (!uvData.value) return 0
+
+  return uvData.value.safe_exposure_time[skinType.value]
+})
+
+watch(burnTime, (newTime) => {
+  if (!newTime) return
+
+  timer.value = newTime * 60
+})
+
+const exposureTime = computed(()=>{
+  const min = Math.floor(timer.value / 60)
+  const sec = timer.value % 60
+
+  return `${min}:${sec.toString().padStart(2,'0')}`
+})
 
 async function fetchWeather(lat, lng) {
   try {
@@ -271,7 +297,7 @@ function pauseTimer() {
 function cancelTimer() {
   clearInterval(interval)
 
-  timer.value = burnTime.value
+  timer.value = burnTime.value * 60
   isRunning.value = false
 }
 
@@ -441,7 +467,7 @@ box-shadow:
 /* UV CARD */
 .uv-card {
   grid-column:1 / 7;
-  grid-row:1 / 5;
+  grid-row:1 / 4;
   background:rgba(255,150,0,0.35);
 
   backdrop-filter: blur(20px);
