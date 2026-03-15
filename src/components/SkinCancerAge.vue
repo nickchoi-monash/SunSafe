@@ -31,12 +31,33 @@ const plotEl = ref(null)
 
 let Plotly = null
 let currentGraphDiv = null
+let resizeObserver = null
+let lastAppliedSize = null
 
 async function ensurePlotly() {
   if (Plotly) return Plotly
   const mod = await import('plotly.js-dist-min')
   Plotly = mod?.default ?? mod
   return Plotly
+}
+
+function squareSize() {
+  const shell = plotEl.value?.parentElement
+  const rect = shell?.getBoundingClientRect?.()
+  const width = Math.round(rect?.width ?? 0)
+  const height = Math.round(rect?.height ?? 0)
+  const size = Math.min(width || 0, height || 0) || width || height || 0
+  return size > 0 ? size : null
+}
+
+function applySquareLayout() {
+  if (!Plotly || !currentGraphDiv) return
+  const size = squareSize()
+  if (size && size !== lastAppliedSize) {
+    lastAppliedSize = size
+    Plotly.relayout(currentGraphDiv, { height: size, width: size })
+  }
+  Plotly.Plots?.resize?.(currentGraphDiv)
 }
 
 async function listAllRows(model, limit = 2000) {
@@ -126,7 +147,7 @@ async function renderPlot(rows) {
 
   const layout = {
     margin: { l: 70, r: 80, t: 10, b: 110 },
-    height: 600,
+    height: squareSize() ?? 600,
     paper_bgcolor: '#f3f5f7',
     plot_bgcolor: '#fbfbfb',
     xaxis: {
@@ -152,6 +173,7 @@ async function renderPlot(rows) {
 
   currentGraphDiv = el
   await plotly.newPlot(el, [trace], layout, config)
+  applySquareLayout()
 }
 
 onMounted(async () => {
@@ -165,6 +187,13 @@ onMounted(async () => {
 
     const rows = await listAllRows(model)
     await renderPlot(rows)
+
+    const shell = plotEl.value?.parentElement
+    if (shell && typeof ResizeObserver !== 'undefined' && !resizeObserver) {
+      resizeObserver = new ResizeObserver(() => applySquareLayout())
+      resizeObserver.observe(shell)
+    }
+    window.addEventListener('resize', applySquareLayout, { passive: true })
   } catch (err) {
     console.error('Failed to load cancer_age_data:', err)
     error.value = 'Failed to load chart data. Check console for details.'
@@ -174,6 +203,9 @@ onMounted(async () => {
 })
 
 onBeforeUnmount(() => {
+  window.removeEventListener('resize', applySquareLayout)
+  resizeObserver?.disconnect()
+  resizeObserver = null
   if (Plotly && currentGraphDiv) {
     try {
       Plotly.purge(currentGraphDiv)
@@ -192,6 +224,8 @@ onBeforeUnmount(() => {
 
 .plot-shell {
   position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
 }
 
 .plot-overlay {
@@ -205,7 +239,9 @@ onBeforeUnmount(() => {
 }
 
 .plot {
+  position: absolute;
+  inset: 0;
   width: 100%;
-  min-height: 600px;
+  height: 100%;
 }
 </style>

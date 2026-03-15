@@ -64,6 +64,8 @@ const plotEl = ref(null)
 
 let Plotly = null
 let currentGraphDiv = null
+let resizeObserver = null
+let lastAppliedSize = null
 
 function normalizeStateCode(value) {
   if (!value) return null
@@ -181,6 +183,25 @@ async function ensurePlotly() {
   return Plotly
 }
 
+function squareSize() {
+  const shell = plotEl.value?.parentElement
+  const rect = shell?.getBoundingClientRect?.()
+  const width = Math.round(rect?.width ?? 0)
+  const height = Math.round(rect?.height ?? 0)
+  const size = Math.min(width || 0, height || 0) || width || height || 0
+  return size > 0 ? size : null
+}
+
+function applySquareLayout() {
+  if (!Plotly || !currentGraphDiv) return
+  const size = squareSize()
+  if (size && size !== lastAppliedSize) {
+    lastAppliedSize = size
+    Plotly.relayout(currentGraphDiv, { height: size, width: size })
+  }
+  Plotly.Plots?.resize?.(currentGraphDiv)
+}
+
 async function renderPlot() {
   let el = plotEl.value
   if (!el) {
@@ -199,6 +220,8 @@ async function renderPlot() {
 
   const firstYear = years[0]
   const first = buildPlotData(byYear, firstYear, globalMax)
+
+  const targetHeight = squareSize() ?? 560
 
   const trace = {
     type: 'scattergeo',
@@ -295,7 +318,7 @@ async function renderPlot() {
     title: { text: '', font: { size: 14 } },
     margin: { l: 10, r: 10, t: 10, b: 70 },
     paper_bgcolor: '#f3f5f7',
-    height: 560,
+    height: targetHeight,
     geo: {
       projection: { type: 'natural earth' },
       center: { lat: -25.2744, lon: 133.7751 },
@@ -334,6 +357,7 @@ async function renderPlot() {
   currentGraphDiv = el
   await plotly.newPlot(el, [trace], layout, config)
   await plotly.addFrames(el, frames)
+  applySquareLayout()
 }
 
 onMounted(async () => {
@@ -358,6 +382,13 @@ onMounted(async () => {
     }
 
     await renderPlot()
+
+    const shell = plotEl.value?.parentElement
+    if (shell && typeof ResizeObserver !== 'undefined' && !resizeObserver) {
+      resizeObserver = new ResizeObserver(() => applySquareLayout())
+      resizeObserver.observe(shell)
+    }
+    window.addEventListener('resize', applySquareLayout, { passive: true })
   } catch (err) {
     console.error('Failed to load skin_cancer_territory:', err)
     error.value = 'Failed to load map data. Check console for details.'
@@ -367,6 +398,9 @@ onMounted(async () => {
 })
 
 onBeforeUnmount(() => {
+  window.removeEventListener('resize', applySquareLayout)
+  resizeObserver?.disconnect()
+  resizeObserver = null
   if (Plotly && currentGraphDiv) {
     try {
       Plotly.purge(currentGraphDiv)
@@ -385,6 +419,8 @@ onBeforeUnmount(() => {
 
 .plot-shell {
   position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
 }
 
 .plot-overlay {
@@ -398,7 +434,9 @@ onBeforeUnmount(() => {
 }
 
 .plot {
+  position: absolute;
+  inset: 0;
   width: 100%;
-  min-height: 560px;
+  height: 100%;
 }
 </style>

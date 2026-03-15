@@ -105,12 +105,43 @@ onMounted(() => {
 <template>
   <section class="container py-5">
     <SkinCancerKPI />
-    <SkinCancerMap />
     <div class="mt-4">
-      <SkinCanerSex />
+      <div class="row g-4 align-items-stretch">
+        <div class="col-12 col-lg-6">
+          <SkinCancerMap />
+        </div>
+        <div class="col-12 col-lg-6">
+          <div class="insight-card">
+            <div class="insight-title">Cases cluster in the most populated states and rise over time.</div>
+          </div>
+        </div>
+      </div>
     </div>
+
     <div class="mt-4">
-      <SkinCancerAge />
+      <div class="row g-4 align-items-stretch">
+        <div class="col-12 col-lg-6">
+          <SkinCanerSex />
+        </div>
+        <div class="col-12 col-lg-6">
+          <div class="insight-card">
+            <div class="insight-title">Male cases remain higher than female cases across most years.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-4">
+      <div class="row g-4 align-items-stretch">
+        <div class="col-12 col-lg-6">
+          <SkinCancerAge />
+        </div>
+        <div class="col-12 col-lg-6">
+          <div class="insight-card">
+            <div class="insight-title">Most cases occur in older age groups, reflecting cumulative UV exposure.</div>
+          </div>
+        </div>
+      </div>
     </div>
     <!-- <div class="mt-4">
       <SkinTypeTable />
@@ -179,6 +210,36 @@ onMounted(() => {
 </template>
 
 <style scoped>
+.insight-card {
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  padding: 0.75rem 0.5rem;
+  min-height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: left;
+}
+
+.insight-title {
+  font-size: clamp(1.6rem, 2.4vw, 2.6rem);
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  width: 100%;
+  background: linear-gradient(90deg, #ff6a00 0%, #ff8001 45%, #ffb156 100%);
+  color: #ff8001;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow:
+    0 18px 36px rgba(0, 0, 0, 0.16),
+    0 6px 14px rgba(0, 0, 0, 0.10);
+  margin: 0;
+  max-width: 24ch;
+}
+
 .fact-card {
   width: 100%;
   text-align: left;
