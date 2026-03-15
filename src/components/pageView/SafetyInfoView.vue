@@ -1,10 +1,46 @@
 <script setup>
-import { onMounted, ref } from 'vue'
+import { computed, nextTick, onMounted, ref } from 'vue'
 import SkinTypeTable from '../SkinTypeTable.vue';
 import SkinCancerMap from '../SkinCancerMap.vue';
 import SkinCanerSex from '../SkinCanerSex.vue';
 import SkinCancerAge from '../SkinCancerAge.vue';
 import SkinCancerKPI from '../SkinCancerKPI.vue';
+
+const plotIdx = ref(0)
+const slides = [
+  {
+    key: 'map',
+    title: 'Skin Cancer Cases by State/Territory Over Time',
+    insight: 'Cases cluster in the most populated states and rise over time.',
+    component: SkinCancerMap,
+  },
+  {
+    key: 'sex',
+    title: 'Skin cancer cases for males and females over the years',
+    insight: 'Male cases remain higher than female cases across most years.',
+    component: SkinCanerSex,
+  },
+  {
+    key: 'age',
+    title: 'Total skin cancer cases by age group',
+    insight: 'Most cases occur in older age groups, reflecting cumulative UV exposure.',
+    component: SkinCancerAge,
+  },
+]
+
+const activeSlide = computed(() => slides[plotIdx.value] ?? slides[0])
+
+async function nextPlot() {
+  plotIdx.value = (plotIdx.value + 1) % slides.length
+  await nextTick()
+  window.dispatchEvent(new Event('resize'))
+}
+
+async function prevPlot() {
+  plotIdx.value = (plotIdx.value - 1 + slides.length) % slides.length
+  await nextTick()
+  window.dispatchEvent(new Event('resize'))
+}
 
 const funFacts = [
   {
@@ -104,41 +140,31 @@ onMounted(() => {
 
 <template>
   <section class="container py-5">
+    <h2 class="didyouknow-title">Do You Know?</h2>
     <SkinCancerKPI />
-    <div class="mt-4">
-      <div class="row g-4 align-items-stretch">
-        <div class="col-12 col-lg-6">
-          <SkinCancerMap />
-        </div>
-        <div class="col-12 col-lg-6">
-          <div class="insight-card">
-            <div class="insight-title">Cases cluster in the most populated states and rise over time.</div>
-          </div>
-        </div>
-      </div>
-    </div>
+    <div class="mt-4 plot-carousel" aria-label="Skin cancer charts carousel">
+      <button type="button" class="carousel-btn carousel-btn-left" aria-label="Previous chart" @click="prevPlot">
+        <i class="bi bi-chevron-left" aria-hidden="true"></i>
+      </button>
 
-    <div class="mt-4">
-      <div class="row g-4 align-items-stretch">
-        <div class="col-12 col-lg-6">
-          <SkinCanerSex />
-        </div>
-        <div class="col-12 col-lg-6">
-          <div class="insight-card">
-            <div class="insight-title">Male cases remain higher than female cases across most years.</div>
-          </div>
-        </div>
-      </div>
-    </div>
+      <button type="button" class="carousel-btn carousel-btn-right" aria-label="Next chart" @click="nextPlot">
+        <i class="bi bi-chevron-right" aria-hidden="true"></i>
+      </button>
 
-    <div class="mt-4">
-      <div class="row g-4 align-items-stretch">
-        <div class="col-12 col-lg-6">
-          <SkinCancerAge />
-        </div>
-        <div class="col-12 col-lg-6">
-          <div class="insight-card">
-            <div class="insight-title">Most cases occur in older age groups, reflecting cumulative UV exposure.</div>
+      <div class="plot-carousel-slide" :key="activeSlide.key">
+        <div class="chart-section">
+          <div class="chart-heading">{{ activeSlide.title }}</div>
+          <div class="row g-4 align-items-stretch">
+            <div class="col-12 col-lg-8">
+              <div class="plot-frame">
+                <component :is="activeSlide.component" :key="activeSlide.key" />
+              </div>
+            </div>
+            <div class="col-12 col-lg-4">
+              <div class="insight-card">
+                <div class="insight-title">{{ activeSlide.insight }}</div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -148,10 +174,9 @@ onMounted(() => {
     </div> -->
   </section>
   <section class="container py-5">
-    <div class="d-flex align-items-center justify-content-between flex-wrap gap-3 mb-4">
-      <div>
-        <h1 class="h3 mb-1">Safety Info</h1>
-        <p class="text-muted mb-0">Four random fun facts — tap a card to reveal the details.</p>
+    <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
+      <div class="w-100">
+        <h1 class="didyouknow-title">Tap to Explore More</h1>
       </div>
     </div>
 
@@ -210,6 +235,98 @@ onMounted(() => {
 </template>
 
 <style scoped>
+.plot-carousel {
+  position: relative;
+  padding: 0 0.75rem;
+}
+
+.didyouknow-title {
+  text-align: center;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  font-size: clamp(2.2rem, 4.6vw, 3.6rem);
+  line-height: 1.02;
+  margin: 1.5rem auto 2.75rem;
+  padding: 0.5rem 0;
+  color: #2b2f36;
+  text-shadow: 0 18px 42px rgba(0, 0, 0, 0.12);
+}
+
+.plot-carousel-slide {
+  position: relative;
+}
+
+.chart-section {
+  padding: 0.25rem 0.25rem 0.75rem;
+}
+
+.chart-heading {
+  font-size: 1.15rem;
+  font-weight: 900;
+  letter-spacing: -0.01em;
+  margin: 0.25rem 0.5rem 0.85rem;
+  line-height: 1.2;
+  color: rgba(0, 0, 0, 0.86);
+}
+
+.plot-frame {
+  width: 100%;
+}
+
+.plot-frame :deep(h2.h5) {
+  display: none;
+}
+
+.plot-frame :deep(.plot-shell) {
+  width: 100%;
+  max-width: clamp(320px, 42vw, 520px);
+  margin-left: auto;
+  margin-right: auto;
+}
+
+@media (min-width: 992px) {
+  .plot-frame :deep(.plot-shell) {
+    max-width: clamp(420px, 52vw, 720px);
+  }
+}
+
+.carousel-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 3;
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  border: 0;
+  background: rgba(255, 255, 255, 0.85);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.18);
+  display: grid;
+  place-items: center;
+  color: rgba(0, 0, 0, 0.75);
+  transition: transform 180ms ease, filter 180ms ease;
+}
+
+.carousel-btn:hover {
+  transform: translateY(-50%) scale(1.04);
+  filter: brightness(1.02);
+}
+
+.carousel-btn:focus-visible {
+  outline: none;
+  box-shadow:
+    0 0 0 0.3rem rgba(255, 128, 1, 0.28),
+    0 12px 28px rgba(0, 0, 0, 0.18);
+}
+
+.carousel-btn-left {
+  left: -6px;
+}
+
+.carousel-btn-right {
+  right: -6px;
+}
+
 .insight-card {
   background: transparent;
   border: 0;

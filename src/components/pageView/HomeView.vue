@@ -37,7 +37,7 @@ const handleHeroVideoError = () => {
         beach.
       </p>
 
-      <div class="d-flex flex-column flex-sm-row gap-3">
+      <div class="d-flex flex-column flex-sm-row gap-3 justify-content-center">
         <router-link to="/tanning-tool" class="btn btn-lg hero-cta hero-cta-primary">
           <span class="hero-cta-label">Open Tanning Tool</span>
         </router-link>
@@ -46,7 +46,7 @@ const handleHeroVideoError = () => {
         </router-link>
       </div>
 
-      <div class="d-flex flex-wrap gap-2 mt-4">
+      <div class="d-flex flex-wrap gap-2 mt-4 justify-content-center">
         <span class="badge rounded-pill hero-pill">
           <i class="bi bi-geo-alt me-1"></i>
           Location UV
@@ -174,6 +174,10 @@ const handleHeroVideoError = () => {
 .hero-content {
   color: #ffffff;
   align-self: center;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .hero-eyebrow {
@@ -199,6 +203,8 @@ const handleHeroVideoError = () => {
   max-width: 52ch;
   color: rgba(255, 255, 255, 0.9);
   font-size: 1.1rem;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .hero-cta {
