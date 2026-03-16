@@ -9,7 +9,7 @@ import IconUVDetector from '../icons/IconUVDetector.vue';
       <source src="/media/beach.mp4" type="video/mp4">
     </video>
   </div>
-  <!-- UV detector icon in center -->
+  <!-- UV detector tool board in center -->
   <div class="uv-detector-wrapper">
     <IconUVDetector />
   </div>
