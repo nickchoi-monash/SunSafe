@@ -42,3 +42,6 @@ __screenshots__/
 .amplify
 amplify_outputs*
 amplifyconfiguration*
+
+
+.env
