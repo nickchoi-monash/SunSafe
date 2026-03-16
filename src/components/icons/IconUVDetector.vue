@@ -408,10 +408,10 @@ function recommendSPFTime() {
 /* Dashboard background */
 .dashboard {
   background:#f5f6f8;
-  padding:40px;
+  padding:30px clamp(20px,5vw,80px);
   min-height:100vh;
   margin-top:40px;
-  margin-bottom:40px;
+  margin-bottom:40px auto;
 }
 
 /* GRID SYSTEM */
@@ -419,7 +419,7 @@ function recommendSPFTime() {
   display:grid;
   width: 100%;
   grid-template-columns:repeat(9,1fr);
-  grid-auto-rows:minmax(120px,auto);
+  grid-auto-rows:minmax(60px,auto);
   gap:20px;
 }
 
@@ -458,7 +458,7 @@ box-shadow:
 /* UV CARD */
 .uv-card {
   grid-column:1 / 7;
-  grid-row:1 / 4;
+  grid-row:1 / 7;
   background:rgba(255,150,0,0.35);
 
   backdrop-filter: blur(20px);
@@ -481,14 +481,14 @@ box-shadow:
 
 /* MID CARD */
 .mid-card {
-  grid-column:1 / 7;
-  grid-row:5 / 7;
+  grid-column:1 / 4;
+  grid-row:10 / 13;
 }
 
 /* BURN CARD */
 .burn-card {
-  grid-column:7 / 10;
-  grid-row:1 / 4;
+  grid-column:4 / 7;
+  grid-row:7 / 13;
 }
 
 .burn-circle {
@@ -543,7 +543,7 @@ box-shadow:
 /* SPF CARD */
 .spf-card {
   grid-column:7 / 10;
-  grid-row:4 / 7;
+  grid-row:1 / 7;
 
   display:flex;
   flex-direction:column;
@@ -622,18 +622,18 @@ box-shadow:
 
 /* BOTTOM CARDS */
 .humidity-card {
-  grid-column:1 / 4;
-  grid-row:7;
+  grid-column:7 / 10;
+  grid-row:7 / 9;
 }
 
 .temp-card {
-  grid-column:4 / 7;
-  grid-row:7;
+  grid-column:7 / 10;
+  grid-row:9 / 11;
 }
 
 .wind-card {
   grid-column:7 / 10;
-  grid-row:7;
+  grid-row:11 / 13;
 }
 
 .weather-value {

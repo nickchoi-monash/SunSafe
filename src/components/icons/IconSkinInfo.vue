@@ -146,7 +146,8 @@ const selectedSkin = computed(() => {
 
 .skin-stats{
   display:flex;
-  gap:35px;
+  flex-wrap:wrap;
+  gap:16px 28px;
   margin-top:10px;
 }
 
@@ -154,6 +155,7 @@ const selectedSkin = computed(() => {
   display:flex;
   flex-direction:column;
   gap:4px;
+  min-width:90px;
 }
 
 .stat-label{
@@ -162,7 +164,7 @@ const selectedSkin = computed(() => {
 }
 
 .stat-value{
-  font-size:18px;
+  font-size:clamp(14px,2vw,18px);
   font-weight:600;
 }
 

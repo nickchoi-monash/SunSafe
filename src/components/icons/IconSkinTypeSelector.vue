@@ -86,14 +86,14 @@
 }
 
 .skin-card p{
-  font-size:12px;      
+  font-size:clamp(10px,2vw,12px); 
   font-weight:500;
   margin-bottom:10px;
 }
 
 .skin-card {
-  grid-column: 1 / 7;
-  grid-row: 4 / 5;
+  grid-column: 1 / 4;
+  grid-row: 7 / 10;
 
   width: 100%;
 
@@ -105,7 +105,9 @@
 
 .skin-container {
   display: flex;
-  justify-content: space-between;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: auto;
   width: 100%;
   margin-top: 15px;
 }
@@ -118,6 +120,7 @@
   flex-direction:column;
   align-items:center;
   justify-content:center;
+  width:60px;
 } 
 
 .skin-item:hover{
@@ -125,8 +128,8 @@
 }
 
 .skin-circle {
-  width: 55px;
-  height: 55px;
+  width:clamp(40px,5vw,50px);
+  height:clamp(40px,5vw,50px);
   border-radius: 50%;
   margin-bottom:4px;
   transition:all 0.25s ease;
