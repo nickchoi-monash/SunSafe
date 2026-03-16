@@ -3,14 +3,19 @@ import { ref } from 'vue';
 import { VideoPlayer } from '@videojs-player/vue'
 import 'video.js/dist/video-js.css'
 
+// Reactive state for controlling hero video display
 const showHeroVideo = ref(true);
+
+// Fallback handler for video loading errors
 const handleHeroVideoError = () => {
   showHeroVideo.value = false;
 };
 </script>
 
 <template>
+  <!-- Hero section with background media and main content -->
   <section class="hero">
+    <!-- Background media container with video or fallback image -->
     <div class="hero-media" aria-hidden="true">
       <video-player v-if="showHeroVideo"
         src="https://sun-safety-media.s3.ap-southeast-2.amazonaws.com/womenapplyingsunscreen.mp4"
@@ -29,6 +34,7 @@ const handleHeroVideoError = () => {
       <div class="hero-scrim"></div>
     </div>
 
+    <!-- Main hero content with title, subtitle, and call-to-action buttons -->
     <div class="container hero-content py-5">
       <p class="hero-eyebrow mb-2">SunSafety for teens</p>
       <h1 class="hero-title mb-3">Tan smarter. Protect your skin.</h1>
@@ -37,6 +43,7 @@ const handleHeroVideoError = () => {
         beach.
       </p>
 
+      <!-- Primary navigation buttons -->
       <div class="d-flex flex-column flex-sm-row gap-3 justify-content-center">
         <router-link to="/tanning-tool" class="btn btn-lg hero-cta hero-cta-primary">
           <span class="hero-cta-label">Open Tanning Tool</span>
@@ -46,6 +53,7 @@ const handleHeroVideoError = () => {
         </router-link>
       </div>
 
+      <!-- Feature highlight badges -->
       <div class="d-flex flex-wrap gap-2 mt-4 justify-content-center">
         <span class="badge rounded-pill hero-pill">
           <i class="bi bi-geo-alt me-1"></i>
@@ -63,8 +71,10 @@ const handleHeroVideoError = () => {
     </div>
   </section>
 
+  <!-- Features section showcasing key app capabilities -->
   <section class="container py-5">
     <div class="row g-4">
+      <!-- UV understanding feature card -->
       <div class="col-12 col-lg-4">
         <div class="card h-100 shadow-sm">
           <div class="card-body">
@@ -79,6 +89,7 @@ const handleHeroVideoError = () => {
         </div>
       </div>
 
+      <!-- Tanning planning feature card -->
       <div class="col-12 col-lg-4">
         <div class="card h-100 shadow-sm">
           <div class="card-body">
@@ -93,6 +104,7 @@ const handleHeroVideoError = () => {
         </div>
       </div>
 
+      <!-- Skin protection feature card -->
       <div class="col-12 col-lg-4">
         <div class="card h-100 shadow-sm">
           <div class="card-body">
@@ -110,6 +122,7 @@ const handleHeroVideoError = () => {
   </section>
 </template>
 
+<!-- Styles for hero section layout and visual effects -->
 <style scoped>
 .hero {
   position: relative;

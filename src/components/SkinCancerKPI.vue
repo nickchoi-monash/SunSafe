@@ -4,6 +4,7 @@
       {{ error }}
     </div>
 
+    <!-- KPI cards showing overall totals and male/female comparison -->
     <div class="row g-3 g-lg-4 mb-4">
       <div class="col-12 col-lg-4">
         <div class="kpi-card">
@@ -38,14 +39,18 @@
 </template>
 
 <script setup>
+// Import Amplify client and Vue functions
 import { generateClient } from 'aws-amplify/data'
 import { onMounted, ref } from 'vue'
 
+// Create Amplify data client
 const client = generateClient()
 
+// Loading and error states
 const isLoading = ref(true)
 const error = ref(null)
 
+// KPI data values
 const totalCases = ref(0)
 const latestYear = ref(null)
 
@@ -54,15 +59,18 @@ const femaleLatest = ref(null)
 const ratioNote = ref('')
 const ratioYearUsed = ref(null)
 
+// Formats numbers for display (e.g. 123456 -> 123,456)
 function formatNumber(n) {
   return new Intl.NumberFormat().format(Number(n) || 0)
 }
 
+// Converts to number safely (returns 0 for invalid values)
 function toNumber(v) {
   const n = Number(v)
   return Number.isFinite(n) ? n : 0
 }
 
+// Normalizes sex values to standard format
 function normalizeSex(value) {
   const s = String(value ?? '').trim().toLowerCase()
   if (!s) return null
@@ -72,6 +80,7 @@ function normalizeSex(value) {
   return null
 }
 
+// Picks "persons" sex from options
 function pickPersonsSex(options) {
   const pref = ['persons', 'all persons', 'total persons']
   for (const want of pref) {
@@ -85,6 +94,7 @@ function pickPersonsSex(options) {
   return null
 }
 
+// Gets all data rows from model
 async function listAllRows(model, limit = 2000) {
   const all = []
   let nextToken = undefined
@@ -105,6 +115,9 @@ async function listAllRows(model, limit = 2000) {
   return all
 }
 
+// Loads data and calculates KPIs on mount
+// - Fetches all territory rows and sums cases for the latest available year
+// - Fetches gender rows to compute male vs female rate/count
 onMounted(async () => {
   try {
     const territoryModel = client.models?.skin_cancer_territory
@@ -139,10 +152,12 @@ onMounted(async () => {
 
     const genderRows = await listAllRows(genderModel)
 
+    // Determine available years from gender data (descending order)
     const years = Array.from(
       new Set(genderRows.map(r => Number(r?.year)).filter(y => Number.isFinite(y)))
     ).sort((a, b) => b - a)
 
+    // Helper to read numeric fields safely
     const getNumeric = (row, key) => {
       if (!row) return null
       const v = Number(row?.[key])
@@ -191,6 +206,7 @@ onMounted(async () => {
 })
 </script>
 
+<!-- Styles for KPI cards -->
 <style scoped>
 .kpi-card {
   background: #ffffff;

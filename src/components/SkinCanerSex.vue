@@ -3,6 +3,7 @@
     <h2 class="h5 mb-3">Skin cancer (Male vs Female) over time</h2>
 
     <div class="plot-shell">
+      <!-- Plotly renders the line chart into this div -->
       <div ref="plotEl" class="plot" role="img" aria-label="Line chart of male vs female skin cancer over time"></div>
 
       <div v-if="isLoading" class="plot-overlay text-center">
@@ -20,20 +21,25 @@
 </template>
 
 <script setup>
+// Import Amplify client and Vue functions
 import { generateClient } from 'aws-amplify/data'
 import { nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
 
+// Create Amplify data client
 const client = generateClient()
 
+// Loading and error states
 const isLoading = ref(true)
 const error = ref(null)
 const plotEl = ref(null)
 
+// Plotly variables
 let Plotly = null
 let currentGraphDiv = null
 let resizeObserver = null
 let lastAppliedSize = null
 
+// Loads Plotly library
 async function ensurePlotly() {
   if (Plotly) return Plotly
   const mod = await import('plotly.js-dist-min')
@@ -41,6 +47,7 @@ async function ensurePlotly() {
   return Plotly
 }
 
+// Gets square size for plot
 function squareSize() {
   const shell = plotEl.value?.parentElement
   const rect = shell?.getBoundingClientRect?.()
@@ -50,6 +57,7 @@ function squareSize() {
   return size > 0 ? size : null
 }
 
+// Makes plot square and responsive
 function applySquareLayout() {
   if (!Plotly || !currentGraphDiv) return
   const size = squareSize()
@@ -60,6 +68,7 @@ function applySquareLayout() {
   Plotly.Plots?.resize?.(currentGraphDiv)
 }
 
+// Gets all data rows from model
 async function listAllRows(model, limit = 1000) {
   const all = []
   let nextToken = undefined
@@ -80,6 +89,7 @@ async function listAllRows(model, limit = 1000) {
   return all
 }
 
+// Normalizes sex values to standard format
 function normalizeSex(value) {
   const s = String(value ?? '').trim().toLowerCase()
   if (!s) return null
@@ -90,6 +100,7 @@ function normalizeSex(value) {
   return null
 }
 
+// Picks the best metric column from data
 function pickMetricKey(sampleRow) {
   const candidates = [
     'count_cases',
@@ -105,12 +116,17 @@ function pickMetricKey(sampleRow) {
   return null
 }
 
+// Converts to number safely
 function toNumber(value) {
   const n = Number(value)
   return Number.isFinite(n) ? n : 0
 }
 
+// Creates and shows the line chart
+// This function transforms the loaded rows into series by year and sex,
+// then uses Plotly to render the chart in the template's plot container.
 async function renderPlot(rows) {
+  // Ensure the target div exists before rendering
   let el = plotEl.value
   if (!el) {
     await nextTick()
@@ -120,6 +136,7 @@ async function renderPlot(rows) {
 
   const plotly = await ensurePlotly()
 
+  // Choose the numeric column to plot (count or rate)
   const metricKey = pickMetricKey(rows?.[0])
   if (!metricKey) {
     error.value =
@@ -127,6 +144,7 @@ async function renderPlot(rows) {
     return
   }
 
+  // Aggregate data by year and sex (Males/Females)
   const byYear = new Map()
   for (const row of rows ?? []) {
     const year = Number(row?.year ?? row?.Year)
@@ -195,6 +213,7 @@ async function renderPlot(rows) {
   applySquareLayout()
 }
 
+// Loads data and sets up chart on mount
 onMounted(async () => {
   try {
     const model = client.models?.skin_cancer_gender
@@ -221,6 +240,7 @@ onMounted(async () => {
   }
 })
 
+// Cleans up when component unmounts
 onBeforeUnmount(() => {
   window.removeEventListener('resize', applySquareLayout)
   resizeObserver?.disconnect()
@@ -236,6 +256,7 @@ onBeforeUnmount(() => {
 })
 </script>
 
+<!-- Styles for chart container -->
 <style scoped>
 .skin-cancer-sex {
   width: 100%;

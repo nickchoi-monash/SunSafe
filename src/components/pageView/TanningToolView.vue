@@ -3,16 +3,19 @@ import IconUVDetector from '../icons/IconUVDetector.vue';
 </script>
 
 <template>
+  <!-- Video background for the page -->
   <div class="video-background">
     <video autoplay muted loop playsinline preload="metadata">
       <source src="/media/beach.mp4" type="video/mp4">
     </video>
   </div>
+  <!-- UV detector icon in center -->
   <div class="uv-detector-wrapper">
     <IconUVDetector />
   </div>
 </template>
 
+<!-- Styles for video and icon layout -->
 <style scoped>
 .uv-detector-wrapper {
   padding: clamp(1rem, 3vw, 2rem);

@@ -3,6 +3,7 @@
     <h2 class="h5 mb-3">Total skin cancer cases by age group</h2>
 
     <div class="plot-shell">
+      <!-- Plotly renders the chart -->
       <div ref="plotEl" class="plot" role="img" aria-label="Bar chart of skin cancer cases by age group"></div>
 
       <div v-if="isLoading" class="plot-overlay text-center">
@@ -20,20 +21,25 @@
 </template>
 
 <script setup>
+// Import Amplify client and Vue functions
 import { generateClient } from 'aws-amplify/data'
 import { nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
 
+// Create Amplify data client
 const client = generateClient()
 
+// Loading and error states
 const isLoading = ref(true)
 const error = ref(null)
 const plotEl = ref(null)
 
+// Plotly variables
 let Plotly = null
 let currentGraphDiv = null
 let resizeObserver = null
 let lastAppliedSize = null
 
+// Loads Plotly library
 async function ensurePlotly() {
   if (Plotly) return Plotly
   const mod = await import('plotly.js-dist-min')
@@ -41,6 +47,7 @@ async function ensurePlotly() {
   return Plotly
 }
 
+// Gets square size for plot
 function squareSize() {
   const shell = plotEl.value?.parentElement
   const rect = shell?.getBoundingClientRect?.()
@@ -50,6 +57,7 @@ function squareSize() {
   return size > 0 ? size : null
 }
 
+// Makes plot square and responsive
 function applySquareLayout() {
   if (!Plotly || !currentGraphDiv) return
   const size = squareSize()
@@ -60,6 +68,7 @@ function applySquareLayout() {
   Plotly.Plots?.resize?.(currentGraphDiv)
 }
 
+// Gets all data rows from model
 async function listAllRows(model, limit = 2000) {
   const all = []
   let nextToken = undefined
@@ -80,18 +89,25 @@ async function listAllRows(model, limit = 2000) {
   return all
 }
 
+// Sorts age groups by number
 function ageSortKey(value) {
   const s = String(value ?? '')
   const match = s.match(/(\d+)/)
   return match ? Number(match[1]) : 9999
 }
 
+// Converts to number safely
 function toNumber(value) {
   const n = Number(value)
   return Number.isFinite(n) ? n : 0
 }
 
+// Creates and shows the bar chart
+// - Prepares the DOM element used by Plotly
+// - Aggregates raw rows by age group
+// - Builds Plotly trace/layout/config and renders the chart
 async function renderPlot(rows) {
+  // Ensure the target DOM element exists (it is in the template above)
   let el = plotEl.value
   if (!el) {
     await nextTick()
@@ -101,6 +117,7 @@ async function renderPlot(rows) {
 
   const plotly = await ensurePlotly()
 
+  // Group rows by age group label and sum counts
   const grouped = new Map()
   for (const row of rows ?? []) {
     const ageGroup = String(row?.age_group_years ?? '').trim()
@@ -120,11 +137,13 @@ async function renderPlot(rows) {
     return
   }
 
+  // Build Plotly trace (the plotted bars)
   const trace = {
     type: 'bar',
     x: items.map(i => i.ageGroupYears),
     y: items.map(i => i.count),
     marker: {
+      // Color based on count value
       color: items.map(i => i.count),
       colorscale: [
         [0, '#d7f2ee'],
@@ -176,7 +195,9 @@ async function renderPlot(rows) {
   applySquareLayout()
 }
 
+// Loads data and sets up chart on mount
 onMounted(async () => {
+  // This fetches all rows, renders the plot and sets up resizing logic.
   try {
     const model = client.models?.cancer_age_data
     if (!model?.list) {
@@ -202,6 +223,7 @@ onMounted(async () => {
   }
 })
 
+// Cleans up when component unmounts
 onBeforeUnmount(() => {
   window.removeEventListener('resize', applySquareLayout)
   resizeObserver?.disconnect()
@@ -217,6 +239,7 @@ onBeforeUnmount(() => {
 })
 </script>
 
+<!-- Styles for chart container -->
 <style scoped>
 .skin-cancer-age {
   width: 100%;

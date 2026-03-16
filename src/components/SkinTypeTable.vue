@@ -67,14 +67,18 @@
 </template>
 
 <script setup>
+// Import Amplify client and Vue functions
 import { generateClient } from 'aws-amplify/data';
 import { onMounted, ref } from 'vue';
 import outputs from '../../amplify_outputs.json';
 
+// Create Amplify data client
 const client = generateClient();
 
+// Limit for preview rows
 const ROW_LIMIT = 3;
 
+// List of tables to preview
 const TABLES = [
   {
     key: 'uv_skin_data',
@@ -105,10 +109,12 @@ const tableColumns = TABLES.reduce((acc, t) => {
   return acc;
 }, {});
 
+// Gets columns for a table
 function columnsFor(tableKey) {
   return tableColumns[tableKey] ?? ['id'];
 }
 
+// State for each table's data
 const tableState = ref(
   TABLES.reduce((acc, t) => {
     acc[t.key] = { rows: [], isLoading: true, error: null };
@@ -116,6 +122,7 @@ const tableState = ref(
   }, {})
 );
 
+// Formats cell values for display
 function formatCell(value, forTitle = false) {
   if (value === null || value === undefined || value === '') return forTitle ? '' : '—';
   if (typeof value === 'string') return value;
@@ -129,6 +136,7 @@ function formatCell(value, forTitle = false) {
   return String(value);
 }
 
+// Fetches data with optional limit
 async function listWithOptionalLimit(model, limit) {
   try {
     return await model.list({ limit });
@@ -137,6 +145,7 @@ async function listWithOptionalLimit(model, limit) {
   }
 }
 
+// Loads preview data for a table
 async function fetchPreview(tableKey) {
   const state = tableState.value[tableKey];
   state.isLoading = true;
@@ -179,11 +188,13 @@ async function fetchPreview(tableKey) {
   }
 }
 
+// Loads all table previews on mount
 onMounted(async () => {
   await Promise.all(TABLES.map(t => fetchPreview(t.key)));
 });
 </script>
 
+<!-- Styles for table cells -->
 <style scoped>
 .cell {
   max-width: 22rem;

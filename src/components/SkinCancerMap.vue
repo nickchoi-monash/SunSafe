@@ -3,6 +3,7 @@
     <h2 class="h5 mb-3">Skin Cancer Cases by State/Territory Over Time (Persons)</h2>
 
     <div class="plot-shell">
+      <!-- Plotly renders the animated map -->
       <div ref="plotEl" class="plot" role="img" aria-label="Animated map of Australia with case markers"></div>
 
       <div v-if="isLoading" class="plot-overlay text-center">
@@ -20,11 +21,14 @@
 </template>
 
 <script setup>
+// Import Amplify client and Vue functions
 import { generateClient } from 'aws-amplify/data'
 import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
 
+// Create Amplify data client
 const client = generateClient()
 
+// Maps state names to codes
 const stateCodeMap = {
   'New South Wales': 'NSW',
   Victoria: 'VIC',
@@ -44,6 +48,7 @@ const stateCodeMap = {
   ACT: 'ACT',
 }
 
+// State coordinates for map markers
 const stateCoords = {
   NSW: { lat: -33.8688, lon: 151.2093, label: 'New South Wales' },
   VIC: { lat: -37.8136, lon: 144.9631, label: 'Victoria' },
@@ -55,6 +60,7 @@ const stateCoords = {
   ACT: { lat: -35.2809, lon: 149.13, label: 'Australian Capital Territory' },
 }
 
+// Loading and error states
 const isLoading = ref(true)
 const error = ref(null)
 const rawRows = ref([])
@@ -62,11 +68,13 @@ const rawRows = ref([])
 const sexForPersons = ref(null)
 const plotEl = ref(null)
 
+// Plotly variables
 let Plotly = null
 let currentGraphDiv = null
 let resizeObserver = null
 let lastAppliedSize = null
 
+// Converts state names to codes
 function normalizeStateCode(value) {
   if (!value) return null
   const trimmed = String(value).trim()
@@ -76,6 +84,7 @@ function normalizeStateCode(value) {
   return stateCodeMap[upper] ?? null
 }
 
+// Picks "persons" sex from options
 function pickPersonsSex(options) {
   const pref = ['persons', 'all persons', 'total persons', 'total', 'all']
   for (const want of pref) {
@@ -89,6 +98,7 @@ function pickPersonsSex(options) {
   return null
 }
 
+// Gets all data rows from model (handles paginated responses)
 async function listAllRows(model, limit = 1000) {
   const all = []
   let nextToken = undefined
@@ -109,11 +119,13 @@ async function listAllRows(model, limit = 1000) {
   return all
 }
 
+// Gets unique sex options from data
 const sexOptions = computed(() => {
   const set = new Set(rawRows.value.map(r => r?.sex).filter(Boolean))
   return Array.from(set).sort((a, b) => String(a).localeCompare(String(b)))
 })
 
+// Groups data by year and state
 function aggregateCountsByYearAndState(sex) {
   const byYear = new Map()
 
@@ -146,6 +158,7 @@ function aggregateCountsByYearAndState(sex) {
   return { byYear, years, globalMax }
 }
 
+// Builds data for one year of map
 function buildPlotData(byYear, year, globalMax) {
   const byState = byYear.get(year) ?? new Map()
   const states = Object.keys(stateCoords)
@@ -176,6 +189,7 @@ function buildPlotData(byYear, year, globalMax) {
   }
 }
 
+// Loads Plotly library
 async function ensurePlotly() {
   if (Plotly) return Plotly
   const mod = await import('plotly.js-dist-min')
@@ -183,6 +197,7 @@ async function ensurePlotly() {
   return Plotly
 }
 
+// Gets square size for plot
 function squareSize() {
   const shell = plotEl.value?.parentElement
   const rect = shell?.getBoundingClientRect?.()
@@ -192,6 +207,7 @@ function squareSize() {
   return size > 0 ? size : null
 }
 
+// Makes plot square and responsive
 function applySquareLayout() {
   if (!Plotly || !currentGraphDiv) return
   const size = squareSize()
@@ -202,7 +218,12 @@ function applySquareLayout() {
   Plotly.Plots?.resize?.(currentGraphDiv)
 }
 
+// Creates and shows the animated map
+// - Builds data frames for each year
+// - Configures Plotly map layout, colors and animation controls
+// - Renders the map into the DOM element in the template above
 async function renderPlot() {
+  // Ensure the target div exists before rendering
   let el = plotEl.value
   if (!el) {
     await nextTick()
@@ -218,6 +239,7 @@ async function renderPlot() {
     return
   }
 
+  // First frame uses the earliest year in the dataset
   const firstYear = years[0]
   const first = buildPlotData(byYear, firstYear, globalMax)
 
@@ -262,6 +284,8 @@ async function renderPlot() {
     transition: { duration: 250, easing: 'cubic-in-out' },
   }
 
+  // Build animation frames: one frame per year
+  // Each frame updates marker sizes/colors based on that year's counts.
   const frames = years.map(year => {
     const d = buildPlotData(byYear, year, globalMax)
     return {
@@ -282,6 +306,7 @@ async function renderPlot() {
     }
   })
 
+  // Slider control to pick year in the animation
   const sliders = [
     {
       active: 0,
@@ -295,6 +320,7 @@ async function renderPlot() {
     },
   ]
 
+  // Play/pause buttons for the animation
   const updatemenus = [
     {
       type: 'buttons',
@@ -360,6 +386,7 @@ async function renderPlot() {
   applySquareLayout()
 }
 
+// Loads data and sets up map on mount
 onMounted(async () => {
   try {
     const model = client.models?.skin_cancer_territory
@@ -397,6 +424,7 @@ onMounted(async () => {
   }
 })
 
+// Cleans up when component unmounts
 onBeforeUnmount(() => {
   window.removeEventListener('resize', applySquareLayout)
   resizeObserver?.disconnect()
@@ -412,6 +440,7 @@ onBeforeUnmount(() => {
 })
 </script>
 
+<!-- Styles for map container -->
 <style scoped>
 .skin-cancer-map {
   width: 100%;

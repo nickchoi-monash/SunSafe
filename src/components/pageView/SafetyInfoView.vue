@@ -6,7 +6,10 @@ import SkinCanerSex from '../SkinCanerSex.vue';
 import SkinCancerAge from '../SkinCancerAge.vue';
 import SkinCancerKPI from '../SkinCancerKPI.vue';
 
+// Index for carousel slides
 const plotIdx = ref(0)
+
+// List of slides for the chart carousel
 const slides = [
   {
     key: 'map',
@@ -28,20 +31,24 @@ const slides = [
   },
 ]
 
+// Gets the current slide
 const activeSlide = computed(() => slides[plotIdx.value] ?? slides[0])
 
+// Goes to next chart
 async function nextPlot() {
   plotIdx.value = (plotIdx.value + 1) % slides.length
   await nextTick()
   window.dispatchEvent(new Event('resize'))
 }
 
+// Goes to previous chart
 async function prevPlot() {
   plotIdx.value = (plotIdx.value - 1 + slides.length) % slides.length
   await nextTick()
   window.dispatchEvent(new Event('resize'))
 }
 
+// List of fun facts with text and info
 const funFacts = [
   {
     title: 'Did you know Australia is almost the “skin cancer capital” of the world?',
@@ -117,6 +124,7 @@ const funFacts = [
   }
 ]
 
+// Shuffles the list randomly
 function shuffleInPlace(items) {
   for (let idx = items.length - 1; idx > 0; idx -= 1) {
     const swapIdx = Math.floor(Math.random() * (idx + 1))
@@ -125,13 +133,18 @@ function shuffleInPlace(items) {
   return items
 }
 
+// Facts shown on screen
 const shownFacts = ref([])
+
+// Tracks open fact card
 const openIdx = ref(null)
 
+// Opens or closes fact card
 function toggleCard(idx) {
   openIdx.value = openIdx.value === idx ? null : idx
 }
 
+// Sets up facts when page loads
 onMounted(() => {
   const shuffled = shuffleInPlace([...funFacts])
   shownFacts.value = shuffled.slice(0, 4)
@@ -139,9 +152,11 @@ onMounted(() => {
 </script>
 
 <template>
+  <!-- Section with stats and charts -->
   <section class="container py-5">
     <h2 class="didyouknow-title">Do You Know?</h2>
     <SkinCancerKPI />
+    <!-- Chart slider with buttons -->
     <div class="mt-4 plot-carousel" aria-label="Skin cancer charts carousel">
       <button type="button" class="carousel-btn carousel-btn-left" aria-label="Previous chart" @click="prevPlot">
         <i class="bi bi-chevron-left" aria-hidden="true"></i>
@@ -151,6 +166,7 @@ onMounted(() => {
         <i class="bi bi-chevron-right" aria-hidden="true"></i>
       </button>
 
+      <!-- Shows current chart -->
       <div class="plot-carousel-slide" :key="activeSlide.key">
         <div class="chart-section">
           <div class="chart-heading">{{ activeSlide.title }}</div>
@@ -172,6 +188,7 @@ onMounted(() => {
     <!-- <div class="mt-4">
       <SkinTypeTable />
     </div> -->
+    <!-- Links to data sources -->
     <div class="mt-3 text-center">
       <small class="text-muted citation-text">
         Data sources: 
@@ -180,6 +197,7 @@ onMounted(() => {
       </small>
     </div>
   </section>
+  <!-- Clickable facts section -->
   <section class="container py-5">
     <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
       <div class="w-100">
@@ -187,6 +205,7 @@ onMounted(() => {
       </div>
     </div>
 
+    <!-- Grid of facts that expand -->
     <div class="facts-grid row g-4">
       <div v-for="(fact, idx) in shownFacts" :key="fact.title" class="col-12 col-md-6">
         <button
@@ -241,6 +260,7 @@ onMounted(() => {
   </section>
 </template>
 
+<!-- Styles for slider, cards, and layout -->
 <style scoped>
 .plot-carousel {
   position: relative;

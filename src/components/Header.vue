@@ -1,7 +1,9 @@
 <template>
+  <!-- Navigation bar with logo and menu -->
   <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom sticky-top py-3">
     <div class="container">
       
+      <!-- Logo -->
       <router-link class="navbar-brand d-flex align-items-center" to="/" @click="closeMobileMenu">
         <div class="logo-icon-box d-flex align-items-center justify-content-center me-2">
           <img :src="sunsafetyLogo3" alt="SunSafety logo" class="logo-image" />
@@ -21,6 +23,7 @@
         <span class="navbar-toggler-icon"></span>
       </button>
 
+      <!-- Navigation Links -->
       <div class="collapse navbar-collapse" id="sunSafetyNavbar">
         <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
           <li class="nav-item">
@@ -50,6 +53,7 @@
 </template>
 
 <script>
+// Import logo image
 import sunsafetyLogo3 from '../assets/sunsafetylogo3.png';
 
 export default {
@@ -60,6 +64,7 @@ export default {
     };
   },
   methods: {
+    // Closes mobile menu when link clicked
     closeMobileMenu() {
       const collapseEl = this.$el?.querySelector?.('#sunSafetyNavbar');
       if (!collapseEl?.classList?.contains('show')) return;
@@ -74,6 +79,7 @@ export default {
 }
 </script>
 
+<!-- Styles for logo and navigation -->
 <style scoped>
 /* Logo Styling */
 .logo-icon-box {
@@ -110,7 +116,7 @@ export default {
 
 /* Hover State (Visual feedback but no underline) */
 .custom-nav-link:hover {
-  color: #ff8001 !important; /* Theme Orange */
+  color: #ff8001 !important;
 }
 
 /* Active State (Orange text + Orange underline) */
