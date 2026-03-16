@@ -172,6 +172,13 @@ onMounted(() => {
     <!-- <div class="mt-4">
       <SkinTypeTable />
     </div> -->
+    <div class="mt-3 text-center">
+      <small class="text-muted citation-text">
+        Data sources: 
+        <a href="https://www.aihw.gov.au/reports/cancer/cancer-data-in-australia/data?&page=2" target="_blank" rel="noopener noreferrer">Australian Institute of Health and Welfare</a> and 
+        <a href="https://www.canceraustralia.gov.au/cancer-types/melanoma-skin/melanoma-skin-statistics?utm_source=chatgpt.com" target="_blank" rel="noopener noreferrer">Cancer Australia</a>
+      </small>
+    </div>
   </section>
   <section class="container py-5">
     <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
@@ -463,6 +470,20 @@ onMounted(() => {
 
 .fact-source:hover {
   text-decoration: underline;
+}
+
+.citation-text {
+  font-size: 0.75rem;
+  line-height: 1.4;
+}
+
+.citation-text a {
+  color: #6c757d;
+  text-decoration: underline;
+}
+
+.citation-text a:hover {
+  color: #495057;
 }
 
 @media (prefers-reduced-motion: reduce) {
