@@ -133,10 +133,20 @@ import IconSkinInfo from './IconSkinInfo.vue'
 
 console.log('API KEY:', import.meta.env.VITE_UV_API_KEY)
 
+//UV
 const uv = ref(0)
 const uvLevel = ref('')
 const uvColor = ref('#4CAF50')
 const advice = ref('')
+
+//UV api security
+let cachedUVData = null
+let cacheTime = 0
+let lastApiCall = 0
+
+const CACHE_DURATION = 10 * 60 * 1000 // 10 minutes
+const RATE_LIMIT = 5000 // 5 seconds
+
 // const burnTime = ref(0)
 const locationName = ref('Your Location')
 // SkinType
@@ -161,14 +171,41 @@ const temperature = ref(0)
 const windSpeed = ref(0)
 
 async function fetchUV(lat, lng) {
+  const now = Date.now()
+
+  // Rate limiting
+  if (now - lastApiCall < RATE_LIMIT) {
+    console.log("API request blocked: too frequent")
+    return
+  }
+
+  // Cache check
+  if (cachedUVData && now - cacheTime < CACHE_DURATION) {
+    console.log("Using cached UV data")
+
+    const result = cachedUVData
+
+    uv.value = Math.round(result.uv)
+    uvData.value = result
+    setUVLevel(uv.value)
+    recommendSPFTime()
+
+    return
+  }
+
   console.log('Fetching UV data...')
 
-  const response = await fetch(`https://api.openuv.io/api/v1/uv?lat=${lat}&lng=${lng}`, {
-    headers: {
-      'x-access-token': import.meta.env.VITE_UV_API_KEY,
-      'Content-Type': 'application/json'
+  lastApiCall = now
+
+  const response = await fetch(
+    `https://api.openuv.io/api/v1/uv?lat=${lat}&lng=${lng}`, 
+    {
+      headers: {
+        'x-access-token': import.meta.env.VITE_UV_API_KEY,
+        'Content-Type': 'application/json'
+      }
     }
-  })
+  )
 
   if (!response.ok) {
     console.error("OpenUV API error:", response.status)
@@ -179,6 +216,10 @@ async function fetchUV(lat, lng) {
 
   const data = await response.json()
   const result = data.result
+
+  // Save cache
+  cachedUVData = result
+  cacheTime = now
 
   uv.value = Math.round(result.uv)
   uvData.value = result
