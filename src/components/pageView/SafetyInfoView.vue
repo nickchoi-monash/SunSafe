@@ -4,7 +4,6 @@ import SkinTypeTable from '../SkinTypeTable.vue';
 import SkinCancerMap from '../SkinCancerMap.vue';
 import SkinCanerSex from '../SkinCanerSex.vue';
 import SkinCancerAge from '../SkinCancerAge.vue';
-import SkinCancerKPI from '../SkinCancerKPI.vue';
 
 // Index for carousel slides
 const plotIdx = ref(0)
@@ -155,7 +154,6 @@ onMounted(() => {
   <!-- Section with stats and charts -->
   <section class="container py-5">
     <h2 class="didyouknow-title">Do You Know?</h2>
-    <SkinCancerKPI />
     <!-- Chart slider with buttons -->
     <div class="mt-4 plot-carousel" aria-label="Skin cancer charts carousel">
       <button type="button" class="carousel-btn carousel-btn-left" aria-label="Previous chart" @click="prevPlot">

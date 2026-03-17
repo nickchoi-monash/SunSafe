@@ -2,6 +2,7 @@
 import { ref } from 'vue';
 import { VideoPlayer } from '@videojs-player/vue'
 import 'video.js/dist/video-js.css'
+import SkinCancerKPI from '../SkinCancerKPI.vue';
 
 // Reactive state for controlling hero video display
 const showHeroVideo = ref(true);
@@ -18,7 +19,7 @@ const handleHeroVideoError = () => {
     <!-- Background media container with video or fallback image -->
     <div class="hero-media" aria-hidden="true">
       <video-player v-if="showHeroVideo"
-        src="https://sun-safety-media.s3.ap-southeast-2.amazonaws.com/womenapplyingsunscreen.mp4"
+        src="/media/bgv2.mp4"
         poster="/media/hero-poster.png"
         :controls="false"
         :fill="true"
@@ -45,25 +46,25 @@ const handleHeroVideoError = () => {
 
       <!-- Primary navigation buttons -->
       <div class="d-flex flex-column flex-sm-row gap-3 justify-content-center">
-        <router-link to="/tanning-tool" class="btn btn-lg hero-cta hero-cta-primary">
-          <span class="hero-cta-label">Open Tanning Tool</span>
+        <router-link to="/tanning-tool" class="btn btn-lg btn-light fw-bold hero-primary-btn">
+          Open Tanning Tool
         </router-link>
-        <router-link to="/safety-info" class="btn btn-lg hero-cta hero-cta-secondary">
-          <span class="hero-cta-label">Safety Info</span>
+        <router-link to="/safety-info" class="btn btn-lg btn-outline-light fw-bold">
+          Safety Info
         </router-link>
       </div>
 
       <!-- Feature highlight badges -->
       <div class="d-flex flex-wrap gap-2 mt-4 justify-content-center">
-        <span class="badge rounded-pill hero-pill">
+        <span class="hero-feature">
           <i class="bi bi-geo-alt me-1"></i>
           Location UV
         </span>
-        <span class="badge rounded-pill hero-pill">
+        <span class="hero-feature">
           <i class="bi bi-stopwatch me-1"></i>
           Tanning timer
         </span>
-        <span class="badge rounded-pill hero-pill">
+        <span class="hero-feature">
           <i class="bi bi-shield-check me-1"></i>
           Safety tips
         </span>
@@ -73,52 +74,7 @@ const handleHeroVideoError = () => {
 
   <!-- Features section showcasing key app capabilities -->
   <section class="container py-5">
-    <div class="row g-4">
-      <!-- UV understanding feature card -->
-      <div class="col-12 col-lg-4">
-        <div class="card h-100 shadow-sm">
-          <div class="card-body">
-            <div class="feature-icon mb-3">
-              <i class="bi bi-brightness-high"></i>
-            </div>
-            <h2 class="h5 mb-2">Understand UV</h2>
-            <p class="text-muted mb-0">
-              UV can be high even when it’s cloudy. Check your local level and make better choices outdoors.
-            </p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Tanning planning feature card -->
-      <div class="col-12 col-lg-4">
-        <div class="card h-100 shadow-sm">
-          <div class="card-body">
-            <div class="feature-icon mb-3">
-              <i class="bi bi-sunrise"></i>
-            </div>
-            <h2 class="h5 mb-2">Plan your tan</h2>
-            <p class="text-muted mb-0">
-              Use a timer so you don’t lose track of time. Aim for safer exposure, not “as long as possible.”
-            </p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Skin protection feature card -->
-      <div class="col-12 col-lg-4">
-        <div class="card h-100 shadow-sm">
-          <div class="card-body">
-            <div class="feature-icon mb-3">
-              <i class="bi bi-heart-pulse"></i>
-            </div>
-            <h2 class="h5 mb-2">Protect your future</h2>
-            <p class="text-muted mb-0">
-              Sunburn adds up. Small habits today can help reduce long‑term damage to your skin.
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
+    <SkinCancerKPI />
   </section>
 </template>
 
@@ -220,81 +176,19 @@ const handleHeroVideoError = () => {
   margin-right: auto;
 }
 
-.hero-cta {
-  position: relative;
+.hero-feature {
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  padding: 1.65rem 2.35rem;
-  border: 0 !important;
-  background: transparent !important;
-  border-radius: 16px;
-  overflow: visible;
-  box-shadow: none;
-  transition: transform 260ms ease, filter 260ms ease;
-}
-
-.hero-cta::before {
-  content: "";
-  position: absolute;
-  inset: -18px;
-  background-size: 100% 100%;
-  background-repeat: no-repeat;
-  background-position: center;
-  z-index: 0;
-  pointer-events: none;
-  filter: none;
-}
-
-.hero-cta-label {
-  position: relative;
-  z-index: 1;
-  font-weight: 800;
-  letter-spacing: 0.01em;
-}
-
-.hero-cta-primary {
-  color: #1c1400;
-}
-
-.hero-cta-primary::before {
-  background-image: url("../../assets/cream_smear1.png");
-}
-
-.hero-cta-secondary {
-  color: #1c1400 !important;
-}
-
-.hero-cta-secondary::before {
-  background-image: url("../../assets/cream_background2.png");
-}
-
-.hero-cta:hover {
-  transform: translateY(-1px);
-  filter: brightness(1.02);
-}
-
-.hero-cta-secondary:hover {
-  color: rgba(255, 255, 255, 0.96) !important;
-}
-
-.hero-cta:active {
-  transform: translateY(0);
-  filter: brightness(0.99);
-}
-
-.hero-cta:focus-visible {
-  outline: 0;
-  box-shadow: 0 0 0 0.25rem rgba(255, 128, 1, 0.35);
-}
-
-.hero-pill {
-  background: rgba(255, 255, 255, 0.14);
-  border: 1px solid rgba(255, 255, 255, 0.22);
+  gap: 0.25rem;
   color: rgba(255, 255, 255, 0.95);
-  padding: 0.55rem 0.8rem;
-  font-weight: 600;
+  font-weight: 400;
+}
+
+.hero-primary-btn,
+.hero-primary-btn:hover,
+.hero-primary-btn:focus,
+.hero-primary-btn:active {
+  color: #2b2b2b;
 }
 
 .feature-icon {

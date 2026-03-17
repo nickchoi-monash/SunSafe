@@ -4,34 +4,66 @@
       {{ error }}
     </div>
 
-    <!-- KPI cards showing overall totals and male/female comparison -->
-    <div class="row g-3 g-lg-4 mb-4">
-      <div class="col-12 col-lg-4">
-        <div class="kpi-card">
-          <div class="kpi-label">Total Cases (Map)</div>
-          <div class="kpi-value">{{ isLoading ? '—' : formatNumber(totalCases) }}</div>
-        </div>
-      </div>
-
-      <div class="col-12 col-lg-4">
-        <div class="kpi-card">
-          <div class="kpi-label">Latest Year</div>
-          <div class="kpi-value">{{ isLoading ? '—' : (latestYear ?? '—') }}</div>
-        </div>
-      </div>
-
-      <div class="col-12 col-lg-4">
-        <div class="kpi-card">
-          <div class="kpi-label">Male vs Female (latest)</div>
-          <div class="kpi-value">
-            <span v-if="isLoading">—</span>
-            <span v-else>{{ maleLatest ?? '—' }} / {{ femaleLatest ?? '—' }}</span>
+    <div class="row g-4 kpi-row">
+      <div class="col-12 col-lg-4 kpi-col">
+        <div class="card h-100 kpi-feature-card">
+          <div class="card-body">
+            <div class="kpi-feature-icon mb-3" aria-hidden="true">
+              <i class="bi bi-map"></i>
+            </div>
+            <h2 class="h5 mb-2">Total skin cancer cases</h2>
+            <div class="kpi-value mb-1">{{ isLoading ? '—' : formatNumber(totalCases) }}</div>
+            <p class="text-muted mb-0 kpi-subtitle">
+              Sum of reported skin cancer cases across Australia between
+              <span v-if="!isLoading && yearSpanLabel">{{ yearSpanLabel }}</span><span v-else>available years</span>.
+            </p>
           </div>
-          <!-- <div v-if="!isLoading && (ratioYearUsed || ratioNote)" class="kpi-note">
-            <span v-if="ratioYearUsed">Year: {{ ratioYearUsed }}</span>
-            <span v-if="ratioYearUsed && ratioNote"> • </span>
-            <span v-if="ratioNote">{{ ratioNote }}</span>
-          </div> -->
+        </div>
+      </div>
+
+      <div class="col-12 col-lg-4 kpi-col">
+        <div class="card h-100 kpi-feature-card">
+          <div class="card-body">
+            <div class="kpi-feature-icon mb-3" aria-hidden="true">
+              <i class="bi bi-graph-up-arrow"></i>
+            </div>
+            <h2 class="h5 mb-2">Change over time (2011 → 2021)</h2>
+            <div class="kpi-value mb-1">{{ isLoading ? '—' : (changePercentLabel ?? '—') }}</div>
+            <p class="text-muted mb-0 kpi-subtitle">
+              <span v-if="isLoading">Loading…</span>
+              <span
+                v-else-if="changeStartYearUsed !== null && changeEndYearUsed !== null && changeStartTotal !== null && changeEndTotal !== null"
+              >
+                From {{ changeStartYearUsed }} ({{ formatNumber(changeStartTotal) }}) to {{ changeEndYearUsed }}
+                ({{ formatNumber(changeEndTotal) }}): {{ changeDeltaLabel }} cases.
+              </span>
+              <span v-else>—</span>
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12 col-lg-4 kpi-col">
+        <div class="card h-100 kpi-feature-card">
+          <div class="card-body">
+            <div class="kpi-feature-icon mb-3" aria-hidden="true">
+              <i class="bi bi-gender-ambiguous"></i>
+            </div>
+            <h2 class="h5 mb-2">Male vs female (latest skin cancer rate)</h2>
+            <div class="kpi-value mb-1">
+              <span v-if="isLoading">—</span>
+              <span v-else>{{ maleLatest ?? '—' }} / {{ femaleLatest ?? '—' }}</span>
+            </div>
+            <p class="text-muted mb-0 kpi-subtitle">
+              <span v-if="isLoading">Loading…</span>
+              <span v-else>
+                <span v-if="ratioYearUsed">Year {{ ratioYearUsed }}</span>
+                <span v-if="ratioYearUsed && ratioNote"> • </span>
+                <span v-if="ratioNote">{{ ratioNote }}</span>
+                <span v-if="!ratioYearUsed && !ratioNote">—</span>
+              </span>
+            </p>
+          </div>
         </div>
       </div>
     </div>
@@ -41,7 +73,7 @@
 <script setup>
 // Import Amplify client and Vue functions
 import { generateClient } from 'aws-amplify/data'
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 
 // Create Amplify data client
 const client = generateClient()
@@ -53,6 +85,11 @@ const error = ref(null)
 // KPI data values
 const totalCases = ref(0)
 const latestYear = ref(null)
+const earliestYear = ref(null)
+const changeStartYearUsed = ref(null)
+const changeEndYearUsed = ref(null)
+const changeStartTotal = ref(null)
+const changeEndTotal = ref(null)
 
 const maleLatest = ref(null)
 const femaleLatest = ref(null)
@@ -69,6 +106,38 @@ function toNumber(v) {
   const n = Number(v)
   return Number.isFinite(n) ? n : 0
 }
+
+const yearSpanLabel = computed(() => {
+  const start = Number(earliestYear.value)
+  const end = Number(latestYear.value)
+  if (!Number.isFinite(start) || !Number.isFinite(end)) return ''
+  const years = Math.max(1, end - start + 1)
+  return `${start}–${end} (${years} year${years === 1 ? '' : 's'})`
+})
+
+const changeDelta = computed(() => {
+  const start = Number(changeStartTotal.value)
+  const end = Number(changeEndTotal.value)
+  if (!Number.isFinite(start) || !Number.isFinite(end)) return null
+  return end - start
+})
+
+const changeDeltaLabel = computed(() => {
+  const d = Number(changeDelta.value)
+  if (!Number.isFinite(d)) return '—'
+  return `${d >= 0 ? '+' : ''}${formatNumber(d)}`
+})
+
+const changePercentLabel = computed(() => {
+  const start = Number(changeStartTotal.value)
+  const d = Number(changeDelta.value)
+  if (!Number.isFinite(start) || !Number.isFinite(d) || start <= 0) return '—'
+  const pct = (d / start) * 100
+  const absPct = Math.abs(pct)
+  const digits = absPct >= 100 ? 0 : absPct >= 10 ? 1 : 1
+  const txt = pct.toFixed(digits)
+  return `${pct >= 0 ? '+' : ''}${txt}%`
+})
 
 // Normalizes sex values to standard format
 function normalizeSex(value) {
@@ -120,6 +189,9 @@ async function listAllRows(model, limit = 2000) {
 // - Fetches gender rows to compute male vs female rate/count
 onMounted(async () => {
   try {
+    const TARGET_START_YEAR = 2011
+    const TARGET_END_YEAR = 2021
+
     const territoryModel = client.models?.skin_cancer_territory
     const genderModel = client.models?.skin_cancer_gender
 
@@ -139,16 +211,52 @@ onMounted(async () => {
 
     let total = 0
     let maxYear = null
+    let minYear = null
+    const totalsByYear = new Map()
 
     for (const r of territoryRows) {
       if (personsSex && r?.sex !== personsSex) continue
       const year = Number(r?.year)
-      if (Number.isFinite(year)) maxYear = maxYear === null ? year : Math.max(maxYear, year)
-      total += toNumber(r?.count_cases ?? r?.count)
+      if (Number.isFinite(year)) {
+        maxYear = maxYear === null ? year : Math.max(maxYear, year)
+        minYear = minYear === null ? year : Math.min(minYear, year)
+      }
+      const count = toNumber(r?.count_cases ?? r?.count)
+      total += count
+      if (Number.isFinite(year)) {
+        totalsByYear.set(year, (totalsByYear.get(year) ?? 0) + count)
+      }
     }
 
     totalCases.value = total
     latestYear.value = maxYear
+    earliestYear.value = minYear
+
+    // Change-over-time: compare 2011 vs 2021 (fallback to closest available years if missing)
+    const availableYears = Array.from(totalsByYear.keys()).filter(y => Number.isFinite(y))
+    const sortedYears = availableYears.sort((a, b) => a - b)
+
+    const nearestYear = (target) => {
+      if (!sortedYears.length) return null
+      let best = sortedYears[0]
+      let bestDist = Math.abs(best - target)
+      for (const y of sortedYears) {
+        const d = Math.abs(y - target)
+        if (d < bestDist) {
+          bestDist = d
+          best = y
+        }
+      }
+      return best
+    }
+
+    const startYear = totalsByYear.has(TARGET_START_YEAR) ? TARGET_START_YEAR : nearestYear(TARGET_START_YEAR)
+    const endYear = totalsByYear.has(TARGET_END_YEAR) ? TARGET_END_YEAR : nearestYear(TARGET_END_YEAR)
+
+    changeStartYearUsed.value = startYear
+    changeEndYearUsed.value = endYear
+    changeStartTotal.value = startYear === null ? null : (totalsByYear.get(startYear) ?? 0)
+    changeEndTotal.value = endYear === null ? null : (totalsByYear.get(endYear) ?? 0)
 
     const genderRows = await listAllRows(genderModel)
 
@@ -206,34 +314,56 @@ onMounted(async () => {
 })
 </script>
 
-<!-- Styles for KPI cards -->
+<!-- Styles for KPI cards (match HomeView feature cards) -->
 <style scoped>
-.kpi-card {
-  background: #ffffff;
-  border: 1px solid rgba(0, 0, 0, 0.08);
-  border-radius: 18px;
-  padding: 1.1rem 1.25rem;
-  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.06);
-  min-height: 112px;
-}
-
-.kpi-label {
-  font-size: 0.95rem;
-  color: rgba(0, 0, 0, 0.55);
-  font-weight: 600;
-  margin-bottom: 0.35rem;
-}
-
 .kpi-value {
   font-size: 2rem;
-  font-weight: 700;
+  font-weight: 800;
   letter-spacing: -0.02em;
   color: rgba(0, 0, 0, 0.88);
 }
 
-.kpi-note {
-  margin-top: 0.3rem;
-  font-size: 0.85rem;
-  color: rgba(0, 0, 0, 0.5);
+.kpi-feature-card {
+  border: 0;
+  box-shadow: none;
+}
+
+.kpi-subtitle {
+  font-size: 0.95rem;
+}
+
+.kpi-feature-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #fe850d 0%, #ed6820 100%);
+  color: #ffffff;
+  font-size: 1.25rem;
+}
+
+.kpi-col {
+  position: relative;
+}
+
+.kpi-col + .kpi-col::before {
+  content: "";
+  position: absolute;
+  left: 25%;
+  width: 50%;
+  height: 1px;
+  top: -0.75rem;
+  background: rgba(0, 0, 0, 0.18);
+}
+
+@media (min-width: 992px) {
+  .kpi-col + .kpi-col::before {
+    top: 25%;
+    left: -0.5rem;
+    width: 1px;
+    height: 50%;
+  }
 }
 </style>
