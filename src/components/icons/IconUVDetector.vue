@@ -171,6 +171,23 @@
         </div>
       </div>
     </div>
+
+    <div v-if="showModal" class="modal-overlay">
+      <div class="modal-card">
+
+        <h2 class="modal-title">
+          Time to Reapply Sunscreen
+        </h2>
+
+        <p class="modal-text">
+          Your scheduled reminder time has arrived. Reapply sunscreen now to maintain protection.
+        </p>
+
+        <button class="modal-btn" @click="toggleSPF">
+          Record Application
+        </button>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -286,6 +303,7 @@ const spfHours = ref(2)
 const spfMinutes = ref(0)
 const spfTimer = ref(120*60)
 const spfRunning = ref(false)
+const showModal = ref(false)
 
 let spfInterval = null
 
@@ -612,14 +630,13 @@ function toggleSPF() {
 
   spfTimer.value = spfDuration.value
   spfRunning.value = true
+  showModal.value = false
 
   spfInterval = setInterval(() => {
     if (spfTimer.value > 0) {
       spfTimer.value--
     } else {
-      clearInterval(spfInterval)
-      alert("Time to reapply sunscreen!")
-      resetSPF()
+      showModal.value = true
     }
   }, 1000)
 }
@@ -627,6 +644,7 @@ function toggleSPF() {
 function resetSPF() {
   clearInterval(spfInterval)
   spfRunning.value = false
+  showModal.value = false
   spfTimer.value = spfDuration.value
 }
 
@@ -1014,6 +1032,88 @@ watch(uv, () => {
 @media (max-width: 900px) {
   .row {
     grid-template-columns: 1fr;
+  }
+}
+
+/* modal */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+
+  background: rgba(0,0,0,0.35);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  z-index: 999;
+}
+
+.modal-card {
+  width: 400px;
+  padding: 30px;
+
+  border-radius: 28px;
+
+  background: rgba(255,255,255,0.85);
+  backdrop-filter: blur(20px);
+
+  box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+
+  animation: modalPop 0.3s ease;
+}
+
+.modal-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: #1f2d3d;
+}
+
+.modal-text {
+  font-size: 14px;
+  line-height: 1.5;
+  color: #444;
+}
+
+.modal-btn {
+  margin-top: 10px;
+
+  padding: 14px;
+  border-radius: 999px;
+
+  border: none;
+  cursor: pointer;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  color: white;
+
+  background: linear-gradient(135deg, #2f5f85, #3b7aa8);
+
+  transition: all 0.2s ease;
+}
+
+.modal-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+}
+
+@keyframes modalPop {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
   }
 }
 
