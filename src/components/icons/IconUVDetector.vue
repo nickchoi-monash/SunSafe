@@ -369,8 +369,9 @@ watch(searchLocation, (value) => {
 
     try {
       const response = await fetch(
+        `https://q6es18n8ul.execute-api.ap-southeast-2.amazonaws.com/search?q=${value}&format=json&limit=5`
         // `/geo/search?q=${value}&format=json&limit=5`
-        `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json&limit=5`
+        // `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json&limit=5`
       )
 
       suggestions.value = await response.json()
@@ -409,8 +410,9 @@ async function useCurrentLocation() {
     
     try {
       const res = await fetch(
+        `https://q6es18n8ul.execute-api.ap-southeast-2.amazonaws.com/reverse?lat=${lat}&lon=${lng}&format=json`
         // `/geo/reverse?lat=${lat}&lon=${lng}&format=json`
-        `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`
+        // `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`
       )
       const data = await res.json()
 
