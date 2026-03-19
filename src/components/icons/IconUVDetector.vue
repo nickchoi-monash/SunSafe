@@ -655,6 +655,10 @@ watch(uv, () => {
 
 <style scoped>
 /* CENTER CONTAINER */
+.dashboard {
+  width: 100%;
+}
+
 .dashboard-grid {
   max-width: 1100px;
   margin: 0 auto;
@@ -666,23 +670,26 @@ watch(uv, () => {
   width: 100%;
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 20px;
+  gap: 10px;
   margin-bottom: 20px;
   align-items: stretch;
+}
+
+.row > div {
+  display: flex;
+}
+
+.row > div > .card {
+  flex: 1;
 }
 
 .row.full {
   grid-template-columns: 1fr;
 }
 
-.row > div {
-  min-width: 0;
-  display: flex;
-}
-
-.row .card {
+/* .row .card {
   flex: 1; 
-}
+} */
 
 /* COLUMN */
 .left, .right {
@@ -891,13 +898,6 @@ watch(uv, () => {
   opacity:0.85;     
   min-width: 0;
   width: 100%;
-
-  display: -webkit-box;
-  line-clamp: 2;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-
-  overflow: hidden;
 }
 
 .skin-stats {
