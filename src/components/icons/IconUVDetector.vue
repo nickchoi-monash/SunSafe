@@ -39,7 +39,7 @@
                   class="suggestion-item"
                   @click="selectLocation(item)"
                 >
-                  {{ item.display_name }}
+                  {{ item.display_name || item.name}}
                 </div>
               </div>
             </div>
@@ -374,7 +374,10 @@ watch(searchLocation, (value) => {
         // `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json&limit=5`
       )
 
-      suggestions.value = await response.json()
+      suggestions.value = (await response.json()).map(item => ({
+        ...item,
+        display_name: item.display_name || item.name
+      }))
       showSuggestions.value = true
 
     } catch (error) {
@@ -385,7 +388,9 @@ watch(searchLocation, (value) => {
 })
 
 function selectLocation(item) {
-  if (!item || !item.display_name) {
+  const name = item.display_name || item.name
+
+  if (!item || !name) {
     console.warn("Invalid location item:", item)
     return
   }
@@ -394,7 +399,7 @@ function selectLocation(item) {
   showSuggestions.value = false
 
   const lat = item.lat
-  const lng = item.lon
+  const lng = item.lon || item.lng
 
   const formatted = formatLocation(item.display_name)
 
@@ -429,11 +434,8 @@ async function useCurrentLocation() {
 }
 
 function formatLocation(displayName) {
-  if (!displayName || typeof displayName !== 'string') {
-    return {
-      main: '',
-      sub: ''
-    }
+  if (!displayName) {
+    return { main: '', sub: '' }
   }
 
   const parts = displayName.split(',')
@@ -450,7 +452,7 @@ function updateLocationNameFromDisplay(displayName) {
     console.warn("No display_name from API")
     return
   }
-  
+
   const formatted = formatLocation(displayName)
 
   locationMain.value = formatted.main
