@@ -378,6 +378,7 @@ watch(searchLocation, (value) => {
         ...item,
         display_name: item.display_name || item.name
       }))
+      .slice(0,5)
       showSuggestions.value = true
 
     } catch (error) {
@@ -808,6 +809,19 @@ watch(uv, () => {
 
   box-shadow: 0 8px 20px rgba(0,0,0,0.15);
   z-index: 100;
+
+  max-height: 200px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
+
+.suggestions::-webkit-scrollbar {
+  width: 6px;
+}
+
+.suggestions::-webkit-scrollbar-thumb {
+  background: rgba(0,0,0,0.2);
+  border-radius: 10px;
 }
 
 .suggestion-item {
