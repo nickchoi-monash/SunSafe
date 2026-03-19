@@ -673,12 +673,14 @@ watch(uv, () => {
 
 .row.full {
   grid-template-columns: 1fr;
+  padding: 20px;
 }
 
 .row > div {
   min-width: 0;
   display: flex;
   width: 100%;
+  overflow: hidden;
 }
 
 .row .card {
@@ -692,6 +694,8 @@ watch(uv, () => {
   gap: 20px;
 
   min-width: 0;
+  width: 100%;
+  overflow: hidden;
 }
 
 /* CARD BASE */
@@ -722,7 +726,6 @@ watch(uv, () => {
   min-width: 0;   
   overflow: hidden;
   word-wrap: break-word;
-  overflow: visible;
   width: 100%;
 }
 
@@ -799,7 +802,7 @@ watch(uv, () => {
 
 .suggestions {
   position: absolute;
-  top: calc(100% + 6px);
+  top: calc(100% - 10px);
   left: 0;
   right: 0;
 
@@ -893,14 +896,13 @@ watch(uv, () => {
 
 .skin-description{
   font-size:14px;
-  opacity:0.85;
-
-  white-space: normal;
-  word-break: normal;        
+  opacity:0.85;     
   min-width: 0;
-  overflow-wrap: anywhere; 
-  display: break-word;
   width: 100%;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .skin-stats {
@@ -1001,6 +1003,7 @@ watch(uv, () => {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 20px;
+  padding: 20px;
 }
 
 .weather-item .label {
