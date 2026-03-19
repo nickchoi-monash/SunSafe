@@ -673,14 +673,11 @@ watch(uv, () => {
 
 .row.full {
   grid-template-columns: 1fr;
-  padding: 20px;
 }
 
 .row > div {
   min-width: 0;
   display: flex;
-  width: 100%;
-  overflow: hidden;
 }
 
 .row .card {
@@ -694,8 +691,6 @@ watch(uv, () => {
   gap: 20px;
 
   min-width: 0;
-  width: 100%;
-  overflow: hidden;
 }
 
 /* CARD BASE */
@@ -722,11 +717,8 @@ watch(uv, () => {
 
   transition: all 0.25s ease;
   width: 100%;    
-  max-width: 100%; 
   min-width: 0;   
-  overflow: hidden;
   word-wrap: break-word;
-  width: 100%;
 }
 
 .card:hover {
@@ -900,9 +892,12 @@ watch(uv, () => {
   min-width: 0;
   width: 100%;
 
-  white-space: nowrap;
+  display: -webkit-box;
+  line-clamp: 2;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+
   overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 .skin-stats {
@@ -1003,7 +998,6 @@ watch(uv, () => {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 20px;
-  padding: 20px;
 }
 
 .weather-item .label {
