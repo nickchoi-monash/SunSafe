@@ -1,7 +1,8 @@
 <template>
-    <div class="card skin-card">
+  <div class="skin-selector">
+    <div class="skin-inner">
       <h3 class="skin-title">
-        Select your skin type for custom protection alerts
+        Select your skin type for custom protection suggestions
       </h3>
   
       <div class="skin-container">
@@ -22,6 +23,7 @@
         </div>
       </div>
     </div>
+  </div>
 </template>
   
 <script setup>
@@ -75,73 +77,132 @@
   }
 </script>
 
-<style>
-.skin-title{
-  align-self:flex-start;
-  text-align:left;
-  width:100%;
-  font-size:12px;      
-  font-weight:500;
-  margin-top:12px; 
-}
+<style scoped>
 
-.skin-card p{
-  font-size:clamp(10px,2vw,12px); 
-  font-weight:500;
-  margin-bottom:10px;
-}
-
-.skin-card {
-  grid-column: 1 / 4;
-  grid-row: 7 / 10;
-
+/* ===== TITLE ===== */
+.skin-title {
+  align-self: flex-start;
+  text-align: left;
   width: 100%;
 
-  background: white;
-  border-radius: 20px;
-  padding: 15px 20px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+  font-size: 13px;
+  font-weight: 500;
+  margin-top: 12px;
+
+  color: #555;
+  letter-spacing: 0.2px;
 }
 
+
+/* ===== WRAPPER ===== */
+.skin-selector {
+  width: 100%;
+  text-align: center;
+}
+
+
+/* ===== CONTAINER ===== */
 .skin-container {
   display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: auto;
+  justify-content: space-between;  
+  align-items: center;
+
   width: 100%;
-  margin-top: 15px;
+  margin-top: 18px;
+  padding: 0 10px;
 }
 
-.skin-item{
-  cursor:pointer;
-  transition:all 0.25s ease;
 
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  width:60px;
-} 
+/* ===== ITEM ===== */
+.skin-item {
+  cursor: pointer;
 
-.skin-item:hover{
-  transform:translateY(-3px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  width: 60px;
+
+  transition: all 0.25s ease;
 }
 
+
+/* ===== LABEL ===== */
+.skin-item p {
+  font-size: 12px;
+  margin-top: 6px;
+
+  color: #666;  
+  transition: all 0.2s ease;
+}
+
+
+/* ===== HOVER ===== */
+.skin-item:hover {
+  transform: translateY(-4px);
+}
+
+.skin-item:hover p {
+  color: rgba(255,255,255,0.85);
+}
+
+
+/* ===== CIRCLE ===== */
 .skin-circle {
-  width:clamp(40px,5vw,50px);
-  height:clamp(40px,5vw,50px);
+  width: clamp(42px, 5vw, 52px);
+  height: clamp(42px, 5vw, 52px);
+
   border-radius: 50%;
-  margin-bottom:4px;
-  transition:all 0.25s ease;
-  transform:translateY(-4px);
+  margin-bottom: 4px;
+
+  transition: all 0.25s ease;
+
+  /*  subtle depth */
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
 }
 
-.skin-item:hover .skin-circle{
-  transform:scale(1.1);
+
+/* hover放大 */
+.skin-item:hover .skin-circle {
+  transform: scale(1.08);
 }
 
-.skin-item.active .skin-circle{
-  outline:4px solid orange;
-  box-shadow:0 0 12px rgba(255,165,0,0.7);
+
+/* ===== ACTIVE ===== */
+.skin-item.active {
+  transform: translateY(-6px);
 }
+
+.skin-item.active p {
+  color: #111;        
+  font-weight: 500;
+}
+
+.skin-item.active .skin-circle {
+  outline: 3px solid rgba(255,165,0,0.9);   
+  outline-offset: 3px;
+
+  box-shadow:
+    0 0 12px rgba(255,165,0,0.6),
+    0 6px 18px rgba(0,0,0,0.25);  
+}
+
+
+/* ===== MOBILE优化 ===== */
+@media (max-width: 600px) {
+  .skin-container {
+    justify-content: space-around;
+    padding: 0;
+  }
+
+  .skin-item {
+    width: 50px;
+  }
+
+  .skin-item p {
+    font-size: 11px;
+  }
+}
+
 </style>

@@ -127,35 +127,53 @@ const selectedSkin = computed(() => {
 </template>
 
 <style scoped>
-
 .skin-info-card{
   align-items:flex-start;
   text-align:left;
   gap:12px;
+
+  width:100%;
+  max-width: 100%;
+  min-width: 0;
+
+  display: flex;
+  flex-direction: column;
 }
 
 .skin-title{
   font-size:18px;
   font-weight:600;
+
+  overflow:hidden;
+  text-overflow:ellipsis;
 }
 
 .skin-description{
   font-size:14px;
   opacity:0.85;
+
+  white-space: normal;
+  word-break: normal;        
+  overflow-wrap: break-word; 
+  display: inline-block;
+  width: 100%;
 }
 
-.skin-stats{
-  display:flex;
-  flex-wrap:wrap;
-  gap:16px 28px;
-  margin-top:10px;
+.skin-stats {
+  display: flex;
+  flex-direction: column;   
+  gap: 12px;               
+  margin-top: 10px;
+  min-width: 0;
+  width: 100%;
 }
 
 .stat{
-  display:flex;
-  flex-direction:column;
-  gap:4px;
-  min-width:90px;
+  display: flex;
+  justify-content: space-between;  
+  align-items: center;
+
+  width: 100%;
 }
 
 .stat-label{
@@ -178,5 +196,4 @@ const selectedSkin = computed(() => {
   height:10px;
   border-radius:50%;
 }
-
 </style>
