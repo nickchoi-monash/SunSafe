@@ -799,7 +799,7 @@ watch(uv, () => {
 
 .suggestions {
   position: absolute;
-  top: 100%;
+  top: calc(100% + 6px);
   left: 0;
   right: 0;
 
@@ -810,7 +810,7 @@ watch(uv, () => {
   box-shadow: 0 8px 20px rgba(0,0,0,0.15);
   z-index: 100;
 
-  max-height: 200px;
+  max-height: 120px;
   overflow-y: auto;
   scrollbar-width: thin;
 }
