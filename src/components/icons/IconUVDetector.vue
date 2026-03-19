@@ -385,6 +385,11 @@ watch(searchLocation, (value) => {
 })
 
 function selectLocation(item) {
+  if (!item || !item.display_name) {
+    console.warn("Invalid location item:", item)
+    return
+  }
+
   searchLocation.value = item.display_name
   showSuggestions.value = false
 
@@ -424,17 +429,28 @@ async function useCurrentLocation() {
 }
 
 function formatLocation(displayName) {
-  const parts = displayName.split(',')
+  if (!displayName || typeof displayName !== 'string') {
+    return {
+      main: '',
+      sub: ''
+    }
+  }
 
+  const parts = displayName.split(',')
   const clean = parts.map(p => p.trim())
 
   return {
     main: clean[0] || '',
-    sub: clean.slice(1, 3).join(', ') 
+    sub: clean.slice(1, 3).join(', ')
   }
 }
 
 function updateLocationNameFromDisplay(displayName) {
+  if (!displayName) {
+    console.warn("No display_name from API")
+    return
+  }
+  
   const formatted = formatLocation(displayName)
 
   locationMain.value = formatted.main
