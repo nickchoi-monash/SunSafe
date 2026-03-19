@@ -137,7 +137,7 @@ const handleHeroVideoError = () => {
   inset: 0;
   background:
     radial-gradient(1200px 600px at 20% 20%, rgba(255, 200, 120, 0.45) 0%, rgba(0, 0, 0, 0) 60%),
-    linear-gradient(180deg, rgba(0, 0, 0, 0.55) 0%, rgba(0, 0, 0, 0.55) 35%, rgba(0, 0, 0, 0.72) 100%);
+    linear-gradient(180deg, rgba(0, 0, 0, 0.35) 0%, rgba(0, 0, 0, 0.35) 35%, rgba(0, 0, 0, 0.50) 100%);
 }
 
 .hero-content {
