@@ -24,7 +24,7 @@
         <!-- RIGHT: Time to burn -->
         <div class="right">
           <div class="card location-card">
-            <p class="card-title">Location</p>
+            <p class="card-title">Location (to see current UV index)</p>
             <div class = "location-wrapper">
               <input
                 v-model="searchLocation"
@@ -567,31 +567,32 @@ function setUVLevel(value) {
 onMounted(() => {
   console.log('Component mounted')
 
-  if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(
-      position => {
-        const lat = position.coords.latitude
-        const lng = position.coords.longitude
+  // if (navigator.geolocation) {
+  //   navigator.geolocation.getCurrentPosition(
+  //     position => {
+  //       const lat = position.coords.latitude
+  //       const lng = position.coords.longitude
 
-        console.log('User location:', lat, lng)
+  //       console.log('User location:', lat, lng)
 
-        fetchUV(lat, lng)
-        fetchWeather(lat, lng)
-      },
-      error => {
-        console.error('Location error:', error)
+  //       fetchUV(lat, lng)
+  //       fetchWeather(lat, lng)
+  //     },
+  //     error => {
+  //       console.error('Location error:', error)
 
-        const lat = -37.81
-        const lng = 144.96
+  //       const lat = -37.81
+  //       const lng = 144.96
 
-        fetchUV(lat, lng)
-        fetchWeather(lat, lng)
-      }
-    )
-  } else {
-    console.log('Geolocation not supported')
-    fetchUV(-37.81, 144.96)
-  }
+  //       fetchUV(lat, lng)
+  //       fetchWeather(lat, lng)
+  //     }
+  //   )
+  // } else {
+  //   console.log('Geolocation not supported')
+  //   fetchUV(-37.81, 144.96)
+  // }
+  useCurrentLocation()
   recommendSPFTime()
   document.addEventListener("click", handleClickOutside)
 })
