@@ -186,6 +186,9 @@
         <button class="modal-btn" @click="toggleSPF">
           Record Application
         </button>
+        <button class="modal-btn" @click="resetSPF">
+          Stop the Clock
+        </button>
       </div>
     </div>
   </div>
@@ -1083,7 +1086,7 @@ watch(uv, () => {
 }
 
 .modal-btn {
-  margin-top: 10px;
+  /* margin-top: 10px; */
 
   padding: 14px;
   border-radius: 999px;
