@@ -79,9 +79,9 @@
               {{ selectedSkin.name }}
             </h3>
 
-            <p class="skin-description">
+            <div class="skin-description">
               {{ selectedSkin.description }}
-            </p>
+            </div>
 
             <div class="skin-stats">
 
@@ -369,7 +369,8 @@ watch(searchLocation, (value) => {
 
     try {
       const response = await fetch(
-        `/geo/search?q=${value}&format=json&limit=5`
+        // `/geo/search?q=${value}&format=json&limit=5`
+        `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json&limit=5`
       )
 
       suggestions.value = await response.json()
@@ -407,7 +408,10 @@ async function useCurrentLocation() {
     fetchWeather(lat, lng)
     
     try {
-      const res = await fetch(`/geo/reverse?lat=${lat}&lon=${lng}&format=json`)
+      const res = await fetch(
+        // `/geo/reverse?lat=${lat}&lon=${lng}&format=json`
+        `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`
+      )
       const data = await res.json()
 
       updateLocationNameFromDisplay(data.display_name)
